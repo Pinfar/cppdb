@@ -40,3 +40,17 @@ TEST(SerializationTests, StringDeserializedCorrectly) {
         EXPECT_EQ(result, testCase.expectedResult);
     }
 }
+
+TEST(SerializationTests, StringSerializedCorrectly){
+    std::string value = "ala ma kota";
+    auto serialized = Serialize(value);
+    auto deserialized = DeserializeAsString(serialized);
+    EXPECT_EQ(deserialized, value);
+}
+
+TEST(SerializationTests, IntSerializedCorrectly){
+    int value = 201234242;
+    auto serialized = Serialize(value);
+    auto deserialized = DeserializeAsInt(serialized);
+    EXPECT_EQ(deserialized, value);
+}

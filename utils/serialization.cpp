@@ -17,5 +17,12 @@ int DeserializeAsInt(DataCell& cell){
 }
 
 DataCell Serialize(std::string& value){
-    return {};
+    std::vector<unsigned char> serialized{value.begin(), value.end()};
+    return {(int)serialized.size(), serialized};
+}
+
+DataCell Serialize(int value){
+    auto as_bytes = static_cast<const char*>(static_cast<const void*>(&value));
+    std::vector<unsigned char> serialized{as_bytes, as_bytes + sizeof(int)};
+    return {(int)serialized.size(), serialized};
 }
