@@ -15,3 +15,7 @@ int DeserializeAsInt(DataCell& cell){
             (unsigned char)(bytes[0]));
     return value;
 }
+
+DataCell Serialize(std::string& value){
+    return {};
+}

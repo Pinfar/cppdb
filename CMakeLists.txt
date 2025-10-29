@@ -26,6 +26,7 @@ target_sources(
   hello_test.cpp
   tests/storage_test.cpp
   tests/formatter_test.cpp
+  tests/serialization_test.cpp
   storage/storage.cpp
   storage/storage.h
   metadata/cell.h
