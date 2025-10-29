@@ -8,6 +8,7 @@ class StorageEngine{
         std::vector<DataPage> dataPageCache;
     public:
         StorageEngine();
+        StorageEngine(StorageEngine&) = delete;
         StorageEngine(TableHeader header, std::vector<DataPage> cache);
         DataBaseHeaderPage& getDatabaseHeaderPage();
         DataPage& getDataPage(int id);
