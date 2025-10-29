@@ -4,11 +4,12 @@
 
 class StorageEngine{
     private:
-        std::shared_ptr<DataBaseHeaderPage> headerPage;
-        std::vector<std::shared_ptr<DataPage>> dataPageCache;
+        DataBaseHeaderPage headerPage;
+        std::vector<DataPage> dataPageCache;
     public:
         StorageEngine();
-        StorageEngine(TableHeader header, std::vector<std::shared_ptr<DataPage>> cache);
-        std::shared_ptr<DataBaseHeaderPage> getDatabaseHeaderPage();
-        std::shared_ptr<DataPage> getDataPage(int id);
+        StorageEngine(TableHeader header, std::vector<DataPage> cache);
+        const DataBaseHeaderPage& getDatabaseHeaderPage();
+        const DataPage& getDataPage(int id);
+        const static DataPage EMPTY_PAGE;
 };

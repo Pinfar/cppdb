@@ -1,24 +1,27 @@
 #include"storage.h"
 
 StorageEngine::StorageEngine(){
-    this->headerPage = std::make_shared<DataBaseHeaderPage>();
 }
 
-StorageEngine::StorageEngine(TableHeader header, std::vector<std::shared_ptr<DataPage>> cache){
-    this->headerPage = std::make_shared<DataBaseHeaderPage>(DataBaseHeaderPage{{header}});
+StorageEngine::StorageEngine(TableHeader header, std::vector<DataPage> cache){
+    this->headerPage = DataBaseHeaderPage{{header}};
     this->dataPageCache = cache;
 }
 
 
-std::shared_ptr<DataBaseHeaderPage> StorageEngine::getDatabaseHeaderPage(){
+const DataBaseHeaderPage& StorageEngine::getDatabaseHeaderPage(){
     return this->headerPage;
 }
 
-std::shared_ptr<DataPage> StorageEngine::getDataPage(int id){
+const DataPage& StorageEngine::getDataPage(int id){
     for(auto& page: this->dataPageCache){
-        if(page->id == id){
+        if(page.id == id){
             return page;
         }
     }
-    return {};
+    return this->EMPTY_PAGE;
 }
+
+const DataPage StorageEngine::EMPTY_PAGE{
+    -1,{},-1
+};
