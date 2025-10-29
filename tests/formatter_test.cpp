@@ -72,3 +72,9 @@ TEST(FormatterTests, RowIsPrintedCorrectly) {
     auto serialized = GetSerializedRow(row, table);
     EXPECT_EQ(serialized,  "koteczek;2141628429");
 }
+
+TEST(FormatterTests, HeaderIsPrintedCorrectly) {
+    auto table = GetSampleTable();
+    auto serialized = GetSerializedHeader(table);
+    EXPECT_EQ(serialized,  "Column1;Column2");
+}

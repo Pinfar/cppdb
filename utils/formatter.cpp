@@ -1,5 +1,14 @@
 #include "formatter.h"
 
+std::string GetSerializedHeader(TableDefinition& table){
+    std::string result = "";
+    for(int i=0;i<table.columns.size();i++){
+        if(i>0)result += ";";
+        result += table.columns[i].name;
+    }
+    return result;
+}
+
 std::string GetSerializedRow(DataRow& row, TableDefinition& table){
     std::string result = "";
     for(int i=0;i<row.cells.size();i++){
