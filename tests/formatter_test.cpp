@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "../utils/formatter.h"
+#include "../utils/serialization.h"
 #include "../metadata/cell.h"
 
 template<typename T>

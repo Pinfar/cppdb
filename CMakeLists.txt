@@ -31,6 +31,8 @@ target_sources(
   metadata/cell.h
   utils/formatter.cpp
   utils/formatter.h
+  utils/serialization.cpp
+  utils/serialization.h
 )
 
 target_link_libraries(
