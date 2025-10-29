@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "../utils/formatter.h"
 #include "../metadata/cell.h"
+#include "../utils/serialization.h"
 
 TEST(FormatterTests, CellConvertedToStringCorrectly) {
 
@@ -38,4 +39,14 @@ TEST(FormatterTests, HeaderIsPrintedCorrectly) {
     auto table = GetSampleTable();
     auto serialized = GetSerializedHeader(table);
     EXPECT_EQ(serialized,  "Column1;Column2");
+}
+
+TEST(FormatterTests, TableIsPrintedCorrectly) {
+    auto table = GetSampleTable();
+    std::vector<DataRow> rows{
+        {{Serialize("AAA"), Serialize(10)}},
+        {{Serialize("NNN"), Serialize(20)}}
+    };
+    auto serialized = GetSerializedResult(rows, table);
+    EXPECT_EQ(serialized,  "Column1;Column2\nAAA;10\nNNN;20\n");
 }

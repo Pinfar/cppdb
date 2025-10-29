@@ -19,6 +19,14 @@ std::string GetSerializedRow(DataRow& row, TableDefinition& table){
     return result;
 }
 
+std::string GetSerializedResult(std::vector<DataRow>& result, TableDefinition& table){
+    auto serialized = GetSerializedHeader(table) + "\n";
+    for(auto& row : result){
+        serialized += GetSerializedRow(row, table) + "\n";
+    }
+    return serialized;
+}
+
 std::string GetStringValue(DataCell& cell, Column& columnData ){
     switch (columnData.type)
     {
