@@ -9,7 +9,7 @@ class StorageEngine{
     public:
         StorageEngine();
         StorageEngine(TableHeader header, std::vector<DataPage> cache);
-        const DataBaseHeaderPage& getDatabaseHeaderPage();
-        const DataPage& getDataPage(int id);
-        const static DataPage EMPTY_PAGE;
+        DataBaseHeaderPage& getDatabaseHeaderPage();
+        DataPage& getDataPage(int id);
+        static DataPage EMPTY_PAGE;
 };

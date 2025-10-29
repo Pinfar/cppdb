@@ -9,11 +9,11 @@ StorageEngine::StorageEngine(TableHeader header, std::vector<DataPage> cache){
 }
 
 
-const DataBaseHeaderPage& StorageEngine::getDatabaseHeaderPage(){
+DataBaseHeaderPage& StorageEngine::getDatabaseHeaderPage(){
     return this->headerPage;
 }
 
-const DataPage& StorageEngine::getDataPage(int id){
+DataPage& StorageEngine::getDataPage(int id){
     for(auto& page: this->dataPageCache){
         if(page.id == id){
             return page;
@@ -22,6 +22,6 @@ const DataPage& StorageEngine::getDataPage(int id){
     return this->EMPTY_PAGE;
 }
 
-const DataPage StorageEngine::EMPTY_PAGE{
+DataPage StorageEngine::EMPTY_PAGE{
     -1,{},-1
 };

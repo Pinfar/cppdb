@@ -41,11 +41,11 @@ TEST(StorageTests, StorageInitializedCorrectly) {
 
 TEST(StorageTests, InformationAboutPagesIsCorrect) {
   StorageEngine engine = InitStorage();
-  auto header = engine.getDatabaseHeaderPage();
+  const auto& header = engine.getDatabaseHeaderPage();
   EXPECT_EQ(header.tables.size(), 1);
   auto table = header.tables[0];
   for(auto pageId: table.dataPages){
-    auto page = engine.getDataPage(pageId);
+    const auto& page = engine.getDataPage(pageId);
     EXPECT_EQ(page.id, pageId);
   }
 }
