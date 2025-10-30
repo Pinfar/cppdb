@@ -4,6 +4,7 @@ project(my_project)
 # GoogleTest requires at least C++17
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_BUILD_TYPE Debug)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -26,6 +27,7 @@ target_sources(
   tests/storage_test.cpp
   tests/formatter_test.cpp
   tests/serialization_test.cpp
+  tests/full_scan_test.cpp
   storage/storage.cpp
   storage/storage.h
   metadata/cell.h
@@ -33,6 +35,8 @@ target_sources(
   utils/formatter.h
   utils/serialization.cpp
   utils/serialization.h
+  operators/full_scan.cpp
+  operators/full_scan.h
 )
 
 target_link_libraries(
