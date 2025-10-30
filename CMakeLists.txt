@@ -17,13 +17,12 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 add_executable(
-  hello_test
+  dbcpp_test
 )
 
 target_sources(
-  hello_test
+  dbcpp_test
   PRIVATE
-  hello_test.cpp
   tests/storage_test.cpp
   tests/formatter_test.cpp
   tests/serialization_test.cpp
@@ -37,9 +36,9 @@ target_sources(
 )
 
 target_link_libraries(
-  hello_test
+  dbcpp_test
   GTest::gtest_main
 )
 
 include(GoogleTest)
-gtest_discover_tests(hello_test)
+gtest_discover_tests(dbcpp_test)
