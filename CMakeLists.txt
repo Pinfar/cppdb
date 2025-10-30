@@ -37,6 +37,7 @@ target_sources(
   utils/serialization.h
   operators/full_scan.cpp
   operators/full_scan.h
+  operators/abstract_iterator.h
 )
 
 target_link_libraries(

@@ -1,7 +1,8 @@
 #pragma once
 #include "../storage/storage.h"
+#include "abstract_iterator.h"
 
-class FullScanOperator {
+class FullScanOperator : AbstractDbOperator {
     private:
         StorageEngine& storageEngine;
         std::string tableName;
@@ -10,6 +11,6 @@ class FullScanOperator {
     public:
         FullScanOperator(StorageEngine& storageEngine, std::string tableName);
         FullScanOperator(FullScanOperator&) = delete;
-        bool Next();
-        DataRow& Current();
+        virtual bool Next();
+        virtual DataRow& Current();
 };
