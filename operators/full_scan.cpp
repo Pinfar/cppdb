@@ -1,38 +1,39 @@
 #include "full_scan.h"
-
-FullScanOperator::FullScanOperator(StorageEngine &storageEngine, std::string tableName) : storageEngine(storageEngine),
-                                                                                          currentPage(StorageEngine::EMPTY_PAGE)
-{
-    auto &header = storageEngine.getDatabaseHeaderPage();
-    for (auto &table : header.tables)
+namespace DBCPP_Operators{
+    FullScanOperator::FullScanOperator(StorageEngine &storageEngine, std::string tableName) : storageEngine(storageEngine),
+                                                                                            currentPage(StorageEngine::EMPTY_PAGE)
     {
-        if (table.definition.name == tableName)
+        auto &header = storageEngine.getDatabaseHeaderPage();
+        for (auto &table : header.tables)
         {
-            int pageId = table.dataPages[0];
-            this->currentPage = storageEngine.getDataPage(pageId);
+            if (table.definition.name == tableName)
+            {
+                int pageId = table.dataPages[0];
+                this->currentPage = storageEngine.getDataPage(pageId);
+            }
         }
     }
-}
 
-bool FullScanOperator::Next()
-{
-    auto currentSize = currentPage.rows.size();
-    if(currentPosition < ((int)currentPage.rows.size() - 1))
+    bool FullScanOperator::Next()
     {
-        currentPosition++;
+        auto currentSize = currentPage.rows.size();
+        if(currentPosition < ((int)currentPage.rows.size() - 1))
+        {
+            currentPosition++;
+            return true;
+        }
+        if(currentPage.nextPage == -1)
+        {
+            return false;
+        }
+        currentPosition = 0;
+        currentPage = storageEngine.getDataPage(currentPage.nextPage);
         return true;
     }
-    if(currentPage.nextPage == -1)
+
+
+    DataRow &FullScanOperator::Current()
     {
-        return false;
+        return currentPage.rows[currentPosition];
     }
-    currentPosition = 0;
-    currentPage = storageEngine.getDataPage(currentPage.nextPage);
-    return true;
-}
-
-
-DataRow &FullScanOperator::Current()
-{
-    return currentPage.rows[currentPosition];
 }

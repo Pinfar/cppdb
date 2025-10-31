@@ -28,7 +28,7 @@ std::string GetSerializedResult(std::vector<DataRow>& result, TableDefinition& t
 }
 
 
-std::string GetSerializedOpearatorOutput(AbstractDbOperator& oper, TableDefinition& table)
+std::string GetSerializedOpearatorOutput(DBCPP_Operators::AbstractDbOperator& oper, TableDefinition& table)
 {
     auto serialized = GetSerializedHeader(table) + "\n";
     while(oper.Next()){

@@ -5,6 +5,8 @@
 #include "../operators/full_scan.h"
 namespace FullScanTestsNS
 {
+    using namespace DBCPP_Operators;
+
     DataRow CreateRow(int value){
         return DataRow{{Serialize(value)}};
     }
