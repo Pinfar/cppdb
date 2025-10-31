@@ -27,6 +27,17 @@ std::string GetSerializedResult(std::vector<DataRow>& result, TableDefinition& t
     return serialized;
 }
 
+
+std::string GetSerializedOpearatorOutput(AbstractDbOperator& oper, TableDefinition& table)
+{
+    auto serialized = GetSerializedHeader(table) + "\n";
+    while(oper.Next()){
+        auto& row = oper.Current();
+        serialized += GetSerializedRow(row, table) + "\n";
+    }
+    return serialized;
+}
+
 std::string GetStringValue(DataCell& cell, Column& columnData ){
     switch (columnData.type)
     {

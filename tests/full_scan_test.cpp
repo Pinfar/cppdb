@@ -72,4 +72,16 @@ namespace FullScanTestsNS
         NextElementIs(scan, tableData, "24");
         ASSERT_FALSE(scan.Next());
     }
+
+    
+
+    TEST(FullScanTests, OperatorOutputIsPrintedCorrectly) {
+        StorageEngine engine = InitStorage();
+        FullScanOperator scan {
+            engine, "Table1"
+        };
+        auto& tableData = engine.getDatabaseHeaderPage().tables[0].definition;
+        auto serialized = GetSerializedOpearatorOutput(scan, tableData);
+        EXPECT_EQ(serialized,  "Column1\n1\n2\n4\n11\n12\n14\n21\n22\n24\n");
+    }
 }
