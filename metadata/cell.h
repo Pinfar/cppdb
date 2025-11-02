@@ -20,7 +20,7 @@ struct DataPage{
     int nextPage;
 };
 
-enum ColumnType {
+enum class ColumnType {
     Int, String
 };
 
