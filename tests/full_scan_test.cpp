@@ -46,8 +46,8 @@ namespace FullScanTestsNS
 
 
     TEST(FullScanTests, StorageInitializedCorrectly) {
-    StorageEngine engine = InitStorage();
-    EXPECT_EQ(engine.getDatabaseHeaderPage().tables.size(), 1);
+        StorageEngine engine = InitStorage();
+        EXPECT_EQ(engine.getDatabaseHeaderPage().tables.size(), 1);
     }
 
     void NextElementIs(FullScanOperator& scan, TableDefinition& table, std::string expectedValue){

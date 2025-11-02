@@ -28,6 +28,7 @@ target_sources(
   tests/formatter_test.cpp
   tests/serialization_test.cpp
   tests/full_scan_test.cpp
+  tests/conditions_test.cpp
   storage/storage.cpp
   storage/storage.h
   metadata/cell.h
@@ -38,6 +39,8 @@ target_sources(
   operators/full_scan.cpp
   operators/full_scan.h
   operators/abstract_iterator.h
+  operators/conditions.cpp
+  operators/conditions.h
 )
 
 target_link_libraries(

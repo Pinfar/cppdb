@@ -11,7 +11,7 @@ namespace DBCPP_Operators{
         public:
             FullScanOperator(StorageEngine& storageEngine, std::string tableName);
             FullScanOperator(FullScanOperator&) = delete;
-            virtual bool Next();
-            virtual DataRow& Current();
+            virtual bool Next() override;
+            virtual DataRow& Current() override;
     };
 }
