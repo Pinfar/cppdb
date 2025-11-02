@@ -5,8 +5,6 @@
 #include "../operators/full_scan.h"
 namespace FullScanTestsNS
 {
-    using namespace DBCPP_Operators;
-
     DataRow CreateRow(int value){
         return DataRow{{{value}}};
     }
@@ -50,7 +48,7 @@ namespace FullScanTestsNS
         EXPECT_EQ(engine.getDatabaseHeaderPage().tables.size(), 1);
     }
 
-    void NextElementIs(FullScanOperator& scan, TableDefinition& table, std::string expectedValue){
+    void NextElementIs(DBCPP_Operators::FullScanOperator& scan, TableDefinition& table, std::string expectedValue){
         ASSERT_TRUE(scan.Next());
         auto& current = scan.Current();
         auto row = GetSerializedRow(current, table);
@@ -59,7 +57,7 @@ namespace FullScanTestsNS
 
     TEST(FullScanTests, FullScanIteratesOverAllRecords) {
         StorageEngine engine = InitStorage();
-        FullScanOperator scan {
+        DBCPP_Operators::FullScanOperator scan {
             engine, "Table1"
         };
         auto& tableData = engine.getDatabaseHeaderPage().tables[0].definition;
@@ -79,7 +77,7 @@ namespace FullScanTestsNS
 
     TEST(FullScanTests, OperatorOutputIsPrintedCorrectly) {
         StorageEngine engine = InitStorage();
-        FullScanOperator scan {
+        DBCPP_Operators::FullScanOperator scan {
             engine, "Table1"
         };
         auto& tableData = engine.getDatabaseHeaderPage().tables[0].definition;

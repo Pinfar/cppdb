@@ -29,6 +29,7 @@ target_sources(
   tests/serialization_test.cpp
   tests/full_scan_test.cpp
   tests/conditions_test.cpp
+  tests/where_operator_test.cpp
   storage/storage.cpp
   storage/storage.h
   metadata/cell.h
@@ -41,6 +42,8 @@ target_sources(
   operators/abstract_iterator.h
   operators/conditions.cpp
   operators/conditions.h
+  operators/where_operator.cpp
+  operators/where_operator.h
 )
 
 target_link_libraries(
