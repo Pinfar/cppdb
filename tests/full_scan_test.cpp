@@ -8,7 +8,7 @@ namespace FullScanTestsNS
     using namespace DBCPP_Operators;
 
     DataRow CreateRow(int value){
-        return DataRow{{Serialize(value)}};
+        return DataRow{{{value}}};
     }
 
     StorageEngine InitStorage(){

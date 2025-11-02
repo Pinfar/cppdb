@@ -17,11 +17,7 @@ TEST(SerializationTests, IntDeserializedCorrectly) {
         SerializationTestCase<int>{{243, 87, 89, (unsigned char)128}, -2141628429}
     };
     for(auto& testCase : testCases){
-        DataCell cell {
-            4,
-            testCase.bytes
-        };
-        int result = DeserializeAsInt(cell);
+        int result = DeserializeAsInt(testCase.bytes);
         EXPECT_EQ(result, testCase.expectedResult);
     }
 }
@@ -32,11 +28,7 @@ TEST(SerializationTests, StringDeserializedCorrectly) {
         SerializationTestCase<std::string>{{0x6b, 0x6f , 0x74 , 0x65 , 0x63 , 0x7a , 0x65 , 0x6b}, "koteczek"},
     };
     for(auto& testCase : testCases){
-        DataCell cell {
-            4,
-            testCase.bytes
-        };
-        std::string result = DeserializeAsString(cell);
+        std::string result = DeserializeAsString(testCase.bytes);
         EXPECT_EQ(result, testCase.expectedResult);
     }
 }

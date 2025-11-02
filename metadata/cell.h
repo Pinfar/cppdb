@@ -1,10 +1,13 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <variant>
 
 struct DataCell{
-    int length;
-    std::vector<unsigned char> bytes; 
+    //this is not the most performant way of doing this, but I am still learning,
+    //I read reddit post that says it is 70% slower than raw unions!
+    //So it might be a hotspot in the future, we are going to see!
+    std::variant<std::string, int> value; 
 };
 
 struct DataRow{
