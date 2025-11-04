@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <variant>
+#include <memory>
 
 struct DataCell{
     //this is not the most performant way of doing this, but I am still learning,

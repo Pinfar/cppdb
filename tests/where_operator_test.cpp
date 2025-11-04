@@ -9,11 +9,13 @@
 namespace DBCPP_Operators
 {
     DataRow CreateRow(int value1, std::string value2){
-        return DataRow{{{value1},{value2}}};
+        return DataRow{
+                std::vector<DataCell>{{value1},{value2}}
+            };;
     }
 
     StorageEngine InitStorage(){
-        return StorageEngine(TableHeader{
+        return StorageEngine(DataBaseHeaderPage{{TableHeader{
             2,
             TableDefinition{
                 "Table1",
@@ -29,7 +31,7 @@ namespace DBCPP_Operators
                 }
             },
             {4}
-        },
+        }}},
         std::vector<DataPage>{
             DataPage{
                 4,

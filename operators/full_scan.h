@@ -6,12 +6,12 @@ namespace DBCPP_Operators{
         private:
             StorageEngine& storageEngine;
             std::string tableName;
-            DataPage& currentPage;
+            DataPage* currentPage;
             int currentPosition = -1;
         public:
             FullScanOperator(StorageEngine& storageEngine, std::string tableName);
             FullScanOperator(FullScanOperator&) = delete;
             virtual bool Next() override;
-            virtual DataRow& Current() override;
+            virtual std::unique_ptr<DataRow> Current() override;
     };
 }

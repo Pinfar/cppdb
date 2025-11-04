@@ -25,12 +25,8 @@ TableDefinition GetSampleTable(){
 
 TEST(FormatterTests, RowIsPrintedCorrectly) {
     auto table = GetSampleTable();
-    DataRow row{
-        std::vector<DataCell>{
-            {"koteczek"},
-            {2141628429}
-        }
-    };
+    DataRow drow {std::vector<DataCell>{DataCell{"koteczek"},DataCell{2141628429}}};
+    auto row  = std::make_unique<DataRow>(drow);
     auto serialized = GetSerializedRow(row, table);
     EXPECT_EQ(serialized,  "koteczek;2141628429");
 }
@@ -43,10 +39,10 @@ TEST(FormatterTests, HeaderIsPrintedCorrectly) {
 
 TEST(FormatterTests, TableIsPrintedCorrectly) {
     auto table = GetSampleTable();
-    std::vector<DataRow> rows{
-        {{{"AAA"}, {10}}},
-        {{{"NNN"}, {20}}}
-    };
+    std::vector<std::unique_ptr<DataRow>> rows;
+    auto drow = new DataRow{std::vector<DataCell>{{"AAA"}, {10}}};
+    rows.push_back(std::make_unique<DataRow>(DataRow{ std::vector<DataCell>{{"AAA"}, {10}}}));
+    rows.push_back(std::make_unique<DataRow>(DataRow{ std::vector<DataCell>{{"NNN"}, {20}}}));
     auto serialized = GetSerializedResult(rows, table);
     EXPECT_EQ(serialized,  "Column1;Column2\nAAA;10\nNNN;20\n");
 }

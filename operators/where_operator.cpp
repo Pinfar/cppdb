@@ -5,12 +5,13 @@ namespace DBCPP_Operators{
         while(true) {
             bool hasAnyValue = innerOperator->Next();
             if(!hasAnyValue) return false;
-            bool valueMatches = condition->IsMatch(innerOperator->Current());
+            current = innerOperator->Current();
+            bool valueMatches = condition->IsMatch(current);
             if(valueMatches) return true;
         }
     }
 
-    DataRow& WhereOperator::Current(){
-        return innerOperator->Current();
+    std::unique_ptr<DataRow> WhereOperator::Current(){
+        return std::move(current);
     }
 }

@@ -1,7 +1,7 @@
 #include "full_scan.h"
 namespace DBCPP_Operators{
     FullScanOperator::FullScanOperator(StorageEngine &storageEngine, std::string tableName) : storageEngine(storageEngine),
-                                                                                            currentPage(StorageEngine::EMPTY_PAGE)
+        currentPage(&StorageEngine::EMPTY_PAGE)
     {
         auto &header = storageEngine.getDatabaseHeaderPage();
         for (auto &table : header.tables)
@@ -16,24 +16,24 @@ namespace DBCPP_Operators{
 
     bool FullScanOperator::Next()
     {
-        auto currentSize = currentPage.rows.size();
-        if(currentPosition < ((int)currentPage.rows.size() - 1))
+        auto currentSize = currentPage->rows.size();
+        if(currentPosition < ((int)currentPage->rows.size() - 1))
         {
             currentPosition++;
             return true;
         }
-        if(currentPage.nextPage == -1)
+        if(currentPage->nextPage == -1)
         {
             return false;
         }
         currentPosition = 0;
-        currentPage = storageEngine.getDataPage(currentPage.nextPage);
+        currentPage = storageEngine.getDataPage(currentPage->nextPage);
         return true;
     }
 
 
-    DataRow &FullScanOperator::Current()
+    std::unique_ptr<DataRow> FullScanOperator::Current()
     {
-        return currentPage.rows[currentPosition];
+        return std::make_unique<DataRow>(currentPage->rows[currentPosition]);
     }
 }

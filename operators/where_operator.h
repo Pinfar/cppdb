@@ -9,6 +9,7 @@ namespace DBCPP_Operators{
         private:
             std::unique_ptr<AbstractDbOperator> innerOperator;
             std::unique_ptr<DBCPP_Operators::Condition> condition;
+            std::unique_ptr<DataRow> current;
         public:
             WhereOperator(std::unique_ptr<AbstractDbOperator> innerOperator,std::unique_ptr<DBCPP_Operators::Condition> condition ): 
                 innerOperator{std::move(innerOperator)}, 
@@ -17,6 +18,6 @@ namespace DBCPP_Operators{
             };
             WhereOperator(WhereOperator&) = delete;
             virtual bool Next() override;
-            virtual DataRow& Current() override;
+            virtual std::unique_ptr<DataRow> Current() override;
     };
 }

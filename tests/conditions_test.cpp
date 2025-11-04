@@ -1,11 +1,13 @@
 #include "../operators/conditions.h"
 #include "../metadata/cell.h"
 #include <gtest/gtest.h>
+#include <memory>
+#include <vector>
 
 namespace DBCPP_Operators
 {
     TEST(ConditionsTest, EqualsIntWorks) {
-        DataRow row {{{1},{"ala"}}};
+        std::unique_ptr<DataRow> row {new DataRow{{{1},{"ala"}}}};
         Equals<int> eqOperartor{ 1,0 };
         EXPECT_TRUE(eqOperartor.IsMatch(row));
         Equals<int> eqOperartor2{ 2,0 };
@@ -13,7 +15,7 @@ namespace DBCPP_Operators
     }
 
     TEST(ConditionsTest, EqualsStringWorks) {
-        DataRow row {{{1},{"ala"}}};
+        std::unique_ptr<DataRow> row {new DataRow{{{1},{"ala"}}}};
         Equals<std::string> eqOperartor{ "ala",1 };
         EXPECT_TRUE(eqOperartor.IsMatch(row));
         Equals<std::string> eqOperartor2{ "ola",1 };

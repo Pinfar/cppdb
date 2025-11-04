@@ -10,16 +10,16 @@ std::string GetSerializedHeader(TableDefinition& table){
     return result;
 }
 
-std::string GetSerializedRow(DataRow& row, TableDefinition& table){
+std::string GetSerializedRow(std::unique_ptr<DataRow>& row, TableDefinition& table){
     std::string result = "";
-    for(int i=0;i<row.cells.size();i++){
+    for(int i=0;i<row->cells.size();i++){
         if(i>0)result += ";";
-        result += GetStringValue(row.cells[i], table.columns[i]);
+        result += GetStringValue(row->cells[i], table.columns[i]);
     }
     return result;
 }
 
-std::string GetSerializedResult(std::vector<DataRow>& result, TableDefinition& table){
+std::string GetSerializedResult(std::vector<std::unique_ptr<DataRow>>& result, TableDefinition& table){
     auto serialized = GetSerializedHeader(table) + "\n";
     for(auto& row : result){
         serialized += GetSerializedRow(row, table) + "\n";
@@ -32,7 +32,7 @@ std::string GetSerializedOpearatorOutput(DBCPP_Operators::AbstractDbOperator& op
 {
     auto serialized = GetSerializedHeader(table) + "\n";
     while(oper.Next()){
-        auto& row = oper.Current();
+        auto row = oper.Current();
         serialized += GetSerializedRow(row, table) + "\n";
     }
     return serialized;

@@ -7,10 +7,10 @@ class StorageEngine{
         DataBaseHeaderPage headerPage;
         std::vector<DataPage> dataPageCache;
     public:
-        StorageEngine();
         StorageEngine(StorageEngine&) = delete;
-        StorageEngine(TableHeader header, std::vector<DataPage> cache);
+        StorageEngine(DataBaseHeaderPage header, std::vector<DataPage> cache): headerPage(header), 
+            dataPageCache(std::move(cache)){}
         DataBaseHeaderPage& getDatabaseHeaderPage();
-        DataPage& getDataPage(int id);
+        DataPage* getDataPage(int id);
         static DataPage EMPTY_PAGE;
 };

@@ -2,7 +2,19 @@
 #include "../storage/storage.h"
 
 StorageEngine InitStorage(){
-    return StorageEngine(std::move(TableHeader{
+    std::vector<DataPage> data{
+        {
+                4,
+                std::vector<DataRow>{},
+                -1
+        },
+        {
+                5,
+                std::vector<DataRow>{},
+                -1
+        }
+    };
+    DataBaseHeaderPage header{{TableHeader{
         2,
         TableDefinition{
             "Table1",
@@ -18,19 +30,8 @@ StorageEngine InitStorage(){
             }
         },
         {4,5}
-    }),
-    std::move(std::vector<DataPage>{
-        DataPage{
-            4,
-            {},
-            -1
-        },
-        DataPage{
-            5,
-            {},
-            -1
-        }
-    }));
+    }}};
+    return StorageEngine(header, std::move(data));
 }
 
 
@@ -45,7 +46,7 @@ TEST(StorageTests, InformationAboutPagesIsCorrect) {
   EXPECT_EQ(header.tables.size(), 1);
   auto table = header.tables[0];
   for(auto pageId: table.dataPages){
-    const auto& page = engine.getDataPage(pageId);
-    EXPECT_EQ(page.id, pageId);
+    const auto page = engine.getDataPage(pageId);
+    EXPECT_EQ(page->id, pageId);
   }
 }

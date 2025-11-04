@@ -6,24 +6,11 @@
 namespace FullScanTestsNS
 {
     DataRow CreateRow(int value){
-        return DataRow{{{value}}};
+        return  {std::vector<DataCell>{{value}}};
     }
 
     StorageEngine InitStorage(){
-        return StorageEngine(TableHeader{
-            2,
-            TableDefinition{
-                "Table1",
-                {
-                    Column {
-                        "Column1",
-                        ColumnType::Int
-                    },
-                }
-            },
-            {4}
-        },
-        std::vector<DataPage>{
+        auto data = std::vector<DataPage>{
             DataPage{
                 4,
                 {CreateRow(1),CreateRow(2),CreateRow(4)},
@@ -39,7 +26,21 @@ namespace FullScanTestsNS
                 {CreateRow(21),CreateRow(22),CreateRow(24)},
                 -1
             }
-        });
+        };
+        DataBaseHeaderPage header{{TableHeader{
+            2,
+            TableDefinition{
+                "Table1",
+                {
+                    Column {
+                        "Column1",
+                        ColumnType::Int
+                    },
+                }
+            },
+            {4}
+        }}};
+        return StorageEngine{header,std::move(data)};
     }
 
 
@@ -50,7 +51,7 @@ namespace FullScanTestsNS
 
     void NextElementIs(DBCPP_Operators::FullScanOperator& scan, TableDefinition& table, std::string expectedValue){
         ASSERT_TRUE(scan.Next());
-        auto& current = scan.Current();
+        auto current = scan.Current();
         auto row = GetSerializedRow(current, table);
         ASSERT_EQ(row, expectedValue);
     }
