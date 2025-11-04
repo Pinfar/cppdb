@@ -82,5 +82,9 @@ namespace DBCPP_Operators
         auto tableData = projectionOperator->GetMetadata();
         std::string result = GetSerializedOpearatorOutput(*projectionOperator, tableData);
         EXPECT_EQ(result,  "Column2;Column1\nG;21\n");
+        
+        projectionOperator->Reset();
+        std::string result2 = GetSerializedOpearatorOutput(*projectionOperator, tableData);
+        EXPECT_EQ(result2,  "Column2;Column1\nG;21\n");
     }
 }

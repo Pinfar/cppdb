@@ -8,12 +8,13 @@ namespace DBCPP_Operators{
             std::string tableName;
             DataPage* currentPage;
             int currentPosition = -1;
-            TableDefinition metadata;
+            TableHeader metadata;
         public:
             FullScanOperator(StorageEngine& storageEngine, std::string tableName);
             FullScanOperator(FullScanOperator&) = delete;
             virtual bool Next() override;
             virtual std::unique_ptr<DataRow> Current() override;
             virtual TableDefinition GetMetadata() override;
+            virtual void Reset() override;
     };
 }

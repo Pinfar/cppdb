@@ -8,7 +8,7 @@ namespace DBCPP_Operators{
         {
             if (table.definition.name == tableName)
             {
-                metadata = table.definition;
+                metadata = table;
                 int pageId = table.dataPages[0];
                 this->currentPage = storageEngine.getDataPage(pageId);
             }
@@ -39,6 +39,12 @@ namespace DBCPP_Operators{
     }
 
     TableDefinition FullScanOperator::GetMetadata(){
-        return metadata;
+        return metadata.definition;
+    }
+
+    void FullScanOperator::Reset(){
+        int pageId = metadata.dataPages[0];
+        currentPage = storageEngine.getDataPage(pageId);
+        currentPosition = -1;
     }
 }

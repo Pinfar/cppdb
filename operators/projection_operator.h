@@ -9,13 +9,12 @@ namespace DBCPP_Operators{
         std::vector<int> columns;
     };
 
-    class ProjectionOperator : public AbstractDbOperator {
+    class ProjectionOperator : public BaseDbOperator {
         private:
-            std::unique_ptr<AbstractDbOperator> innerOperator;
             ProjectionDefinition projection;
         public:
             ProjectionOperator(std::unique_ptr<AbstractDbOperator> innerOperator,ProjectionDefinition projection ): 
-                innerOperator{std::move(innerOperator)}, 
+                BaseDbOperator(std::move(innerOperator)), 
                 projection{std::move(projection)}
             {
             };
