@@ -44,6 +44,8 @@ target_sources(
   operators/conditions.h
   operators/where_operator.cpp
   operators/where_operator.h
+  operators/projection_operator.cpp
+  operators/projection_operator.h
 )
 
 target_link_libraries(

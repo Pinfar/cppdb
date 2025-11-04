@@ -1,5 +1,6 @@
 #include "../operators/conditions.h"
 #include "../operators/where_operator.h"
+#include "../operators/projection_operator.h"
 #include "../operators/full_scan.h"
 #include "../metadata/cell.h"
 #include "../utils/formatter.h"
@@ -63,5 +64,23 @@ namespace DBCPP_Operators
         auto& tableData = engine.getDatabaseHeaderPage().tables[0].definition;
         std::string result = GetSerializedOpearatorOutput(whereOperator, tableData);
         EXPECT_EQ(result,  "Column1;Column2\n21;G\n");
+    }
+
+    TEST(WhereOperatorTest, IteratingWithProjectionWorks) 
+    {
+        StorageEngine engine = InitStorage();
+        auto scan = std::make_unique<FullScanOperator>(engine, "Table1");
+        auto condition = std::make_unique<Equals<int>>(21, 0);
+        auto whereOperator = std::make_unique<WhereOperator>(
+            std::move(scan),
+            std::move(condition)
+        );  
+        auto projectionOperator = std::make_unique<ProjectionOperator>(
+            std::move(whereOperator),
+            ProjectionDefinition{{1,0}}
+        );  
+        auto& tableData = engine.getDatabaseHeaderPage().tables[0].definition;
+        std::string result = GetSerializedOpearatorOutput(*projectionOperator, tableData);
+        EXPECT_EQ(result,  "Column1;Column2\nG;21\n");
     }
 }
