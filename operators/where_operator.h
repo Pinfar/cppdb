@@ -19,5 +19,6 @@ namespace DBCPP_Operators{
             WhereOperator(WhereOperator&) = delete;
             virtual bool Next() override;
             virtual std::unique_ptr<DataRow> Current() override;
+            virtual TableDefinition GetMetadata() override;
     };
 }

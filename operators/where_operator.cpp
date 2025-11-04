@@ -14,4 +14,8 @@ namespace DBCPP_Operators{
     std::unique_ptr<DataRow> WhereOperator::Current(){
         return std::move(current);
     }
+
+    TableDefinition WhereOperator::GetMetadata(){
+        return innerOperator->GetMetadata();
+    }
 }

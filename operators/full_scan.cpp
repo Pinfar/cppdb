@@ -8,6 +8,7 @@ namespace DBCPP_Operators{
         {
             if (table.definition.name == tableName)
             {
+                metadata = table.definition;
                 int pageId = table.dataPages[0];
                 this->currentPage = storageEngine.getDataPage(pageId);
             }
@@ -35,5 +36,9 @@ namespace DBCPP_Operators{
     std::unique_ptr<DataRow> FullScanOperator::Current()
     {
         return std::make_unique<DataRow>(currentPage->rows[currentPosition]);
+    }
+
+    TableDefinition FullScanOperator::GetMetadata(){
+        return metadata;
     }
 }

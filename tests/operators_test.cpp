@@ -79,8 +79,8 @@ namespace DBCPP_Operators
             std::move(whereOperator),
             ProjectionDefinition{{1,0}}
         );  
-        auto& tableData = engine.getDatabaseHeaderPage().tables[0].definition;
+        auto tableData = projectionOperator->GetMetadata();
         std::string result = GetSerializedOpearatorOutput(*projectionOperator, tableData);
-        EXPECT_EQ(result,  "Column1;Column2\nG;21\n");
+        EXPECT_EQ(result,  "Column2;Column1\nG;21\n");
     }
 }
