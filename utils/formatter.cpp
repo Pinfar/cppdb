@@ -10,11 +10,11 @@ std::string GetSerializedHeader(TableDefinition& table){
     return result;
 }
 
-std::string GetSerializedRow(std::unique_ptr<DataRow>& row, TableDefinition& table){
+std::string GetSerializedRow(std::unique_ptr<DataRow>& row){
     std::string result = "";
     for(int i=0;i<row->cells.size();i++){
         if(i>0)result += ";";
-        result += GetStringValue(row->cells[i], table.columns[i]);
+        result += GetStringValue(row->cells[i]);
     }
     return result;
 }
@@ -22,7 +22,7 @@ std::string GetSerializedRow(std::unique_ptr<DataRow>& row, TableDefinition& tab
 std::string GetSerializedResult(std::vector<std::unique_ptr<DataRow>>& result, TableDefinition& table){
     auto serialized = GetSerializedHeader(table) + "\n";
     for(auto& row : result){
-        serialized += GetSerializedRow(row, table) + "\n";
+        serialized += GetSerializedRow(row) + "\n";
     }
     return serialized;
 }
@@ -33,13 +33,13 @@ std::string GetSerializedOpearatorOutput(DBCPP_Operators::AbstractDbOperator& op
     auto serialized = GetSerializedHeader(table) + "\n";
     while(oper.Next()){
         auto row = oper.Current();
-        serialized += GetSerializedRow(row, table) + "\n";
+        serialized += GetSerializedRow(row) + "\n";
     }
     return serialized;
 }
 
-std::string GetStringValue(DataCell& cell, Column& columnData ){
-    switch (columnData.type)
+std::string GetStringValue(DataCell& cell){
+    switch (cell.type)
     {
     case ColumnType::String:
         return std::get<std::string>(cell.value);

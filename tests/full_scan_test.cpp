@@ -49,10 +49,10 @@ namespace FullScanTestsNS
         EXPECT_EQ(engine.getDatabaseHeaderPage().tables.size(), 1);
     }
 
-    void NextElementIs(DBCPP_Operators::FullScanOperator& scan, TableDefinition& table, std::string expectedValue){
+    void NextElementIs(DBCPP_Operators::FullScanOperator& scan, std::string expectedValue){
         ASSERT_TRUE(scan.Next());
         auto current = scan.Current();
-        auto row = GetSerializedRow(current, table);
+        auto row = GetSerializedRow(current);
         ASSERT_EQ(row, expectedValue);
     }
 
@@ -62,15 +62,15 @@ namespace FullScanTestsNS
             engine, "Table1"
         };
         auto& tableData = engine.getDatabaseHeaderPage().tables[0].definition;
-        NextElementIs(scan, tableData, "1");
-        NextElementIs(scan, tableData, "2");
-        NextElementIs(scan, tableData, "4");
-        NextElementIs(scan, tableData, "11");
-        NextElementIs(scan, tableData, "12");
-        NextElementIs(scan, tableData, "14");
-        NextElementIs(scan, tableData, "21");
-        NextElementIs(scan, tableData, "22");
-        NextElementIs(scan, tableData, "24");
+        NextElementIs(scan, "1");
+        NextElementIs(scan, "2");
+        NextElementIs(scan, "4");
+        NextElementIs(scan, "11");
+        NextElementIs(scan, "12");
+        NextElementIs(scan, "14");
+        NextElementIs(scan, "21");
+        NextElementIs(scan, "22");
+        NextElementIs(scan, "24");
         ASSERT_FALSE(scan.Next());
     }
 

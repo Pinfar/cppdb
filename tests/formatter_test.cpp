@@ -6,13 +6,11 @@
 TEST(FormatterTests, CellConvertedToStringCorrectly) {
 
     DataCell sCell {"koteczek"};
-    Column sColumn {"Column1", ColumnType::String};
-    auto sCellResult = GetStringValue(sCell,sColumn);
+    auto sCellResult = GetStringValue(sCell);
     EXPECT_EQ(sCellResult,  "koteczek");
 
     DataCell iCell {2141628429};
-    Column iColumn {"Column2", ColumnType::Int};
-    auto iCellResult = GetStringValue(iCell,iColumn);
+    auto iCellResult = GetStringValue(iCell);
     EXPECT_EQ(iCellResult,  "2141628429");
 }
 
@@ -24,10 +22,9 @@ TableDefinition GetSampleTable(){
 }
 
 TEST(FormatterTests, RowIsPrintedCorrectly) {
-    auto table = GetSampleTable();
     DataRow drow {std::vector<DataCell>{DataCell{"koteczek"},DataCell{2141628429}}};
     auto row  = std::make_unique<DataRow>(drow);
-    auto serialized = GetSerializedRow(row, table);
+    auto serialized = GetSerializedRow(row);
     EXPECT_EQ(serialized,  "koteczek;2141628429");
 }
 

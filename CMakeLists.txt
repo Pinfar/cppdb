@@ -29,7 +29,7 @@ target_sources(
   tests/serialization_test.cpp
   tests/full_scan_test.cpp
   tests/conditions_test.cpp
-  tests/where_operator_test.cpp
+  tests/operators_test.cpp
   storage/storage.cpp
   storage/storage.h
   metadata/cell.h
