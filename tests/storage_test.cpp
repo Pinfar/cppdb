@@ -1,22 +1,11 @@
 #include <gtest/gtest.h>
 #include "../storage/storage.h"
+#include "../storage/dbwriter.h"
 
-StorageEngine InitStorage(){
-    std::vector<DataPage> data{
-        {
-                4,
-                std::vector<DataRow>{},
-                -1
-        },
-        {
-                5,
-                std::vector<DataRow>{},
-                -1
-        }
-    };
-    DataBaseHeaderPage header{{TableHeader{
-        2,
-        TableDefinition{
+std::unique_ptr<StorageEngine> InitStorage(){
+        std::unique_ptr<StorageEngine> engine{new StorageEngine({},{})};
+        DBCPP_Storage::DBWriter writer {*engine, {3}};
+        writer.CreateTable(TableDefinition{
             "Table1",
             {
                 Column {
@@ -28,25 +17,24 @@ StorageEngine InitStorage(){
                     ColumnType::Int
                 },
             }
-        },
-        {4,5}
-    }}};
-    return StorageEngine(header, std::move(data));
-}
+        });
+        return std::move(engine);
+    }
+
 
 
 TEST(StorageTests, StorageInitializedCorrectly) {
-  StorageEngine engine = InitStorage();
-  EXPECT_EQ(engine.getDatabaseHeaderPage().tables.size(), 1);
+  auto engine = InitStorage();
+  EXPECT_EQ(engine->getDatabaseHeaderPage().tables.size(), 1);
 }
 
 TEST(StorageTests, InformationAboutPagesIsCorrect) {
-  StorageEngine engine = InitStorage();
-  const auto& header = engine.getDatabaseHeaderPage();
+  auto engine = InitStorage();
+  const auto& header = engine->getDatabaseHeaderPage();
   EXPECT_EQ(header.tables.size(), 1);
   auto table = header.tables[0];
   for(auto pageId: table.dataPages){
-    const auto page = engine.getDataPage(pageId);
+    const auto page = engine->getDataPage(pageId);
     EXPECT_EQ(page->id, pageId);
   }
 }

@@ -1,16 +1,16 @@
 #include "full_scan.h"
 namespace DBCPP_Operators{
-    FullScanOperator::FullScanOperator(StorageEngine &storageEngine, std::string tableName) : storageEngine(storageEngine),
+    FullScanOperator::FullScanOperator(StorageEngine *storageEngine, std::string tableName) : storageEngine(storageEngine),
         currentPage(&StorageEngine::EMPTY_PAGE)
     {
-        auto &header = storageEngine.getDatabaseHeaderPage();
+        auto &header = storageEngine->getDatabaseHeaderPage();
         for (auto &table : header.tables)
         {
             if (table.definition.name == tableName)
             {
                 metadata = table;
                 int pageId = table.dataPages[0];
-                this->currentPage = storageEngine.getDataPage(pageId);
+                this->currentPage = storageEngine->getDataPage(pageId);
             }
         }
     }
@@ -28,7 +28,7 @@ namespace DBCPP_Operators{
             return false;
         }
         currentPosition = 0;
-        currentPage = storageEngine.getDataPage(currentPage->nextPage);
+        currentPage = storageEngine->getDataPage(currentPage->nextPage);
         return true;
     }
 
@@ -44,7 +44,7 @@ namespace DBCPP_Operators{
 
     void FullScanOperator::Reset(){
         int pageId = metadata.dataPages[0];
-        currentPage = storageEngine.getDataPage(pageId);
+        currentPage = storageEngine->getDataPage(pageId);
         currentPosition = -1;
     }
 }

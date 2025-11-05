@@ -1,4 +1,5 @@
 #include"storage.h"
+#include<stdexcept>
 
 
 DataBaseHeaderPage& StorageEngine::getDatabaseHeaderPage(){
@@ -7,11 +8,18 @@ DataBaseHeaderPage& StorageEngine::getDatabaseHeaderPage(){
 
 DataPage* StorageEngine::getDataPage(int id){
     for(auto& page: this->dataPageCache){
-        if(page.id == id){
-            return &page;
+        if(page->id == id){
+            return page.get();
         }
     }
-    return &this->EMPTY_PAGE;
+    throw std::logic_error("Page not found!");
+}
+
+int StorageEngine::createNewDataPage(){
+    int id = nextPageId;
+    dataPageCache.emplace_back(new DataPage{id,{},-1});
+    nextPageId++;
+    return id;
 }
 
 DataPage StorageEngine::EMPTY_PAGE{

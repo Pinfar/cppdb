@@ -3,50 +3,36 @@
 #include "../utils/serialization.h"
 #include "../utils/formatter.h"
 #include "../operators/full_scan.h"
+#include "../storage/dbwriter.h"
 namespace FullScanTestsNS
 {
     DataRow CreateRow(int value){
         return  {std::vector<DataCell>{{value}}};
     }
 
-    StorageEngine InitStorage(){
-        auto data = std::vector<DataPage>{
-            DataPage{
-                4,
-                {CreateRow(1),CreateRow(2),CreateRow(4)},
-                5
-            },
-            DataPage{
-                5,
-                {CreateRow(11),CreateRow(12),CreateRow(14)},
-                10
-            },
-            DataPage{
-                10,
-                {CreateRow(21),CreateRow(22),CreateRow(24)},
-                -1
+    std::unique_ptr<StorageEngine> InitStorage(){
+        std::unique_ptr<StorageEngine> engine{new StorageEngine({},{})};
+        DBCPP_Storage::DBWriter writer {*engine, {3}};
+        writer.CreateTable(TableDefinition{
+            "Table1",
+            {
+                Column {
+                    "Column1",
+                    ColumnType::Int
+                },
             }
-        };
-        DataBaseHeaderPage header{{TableHeader{
-            2,
-            TableDefinition{
-                "Table1",
-                {
-                    Column {
-                        "Column1",
-                        ColumnType::Int
-                    },
-                }
-            },
-            {4}
-        }}};
-        return StorageEngine{header,std::move(data)};
+        });
+        std::vector numbers {1,2,4,11,12,14,21,22,24};
+        for(auto i:numbers){
+            writer.InsertRecord("Table1", CreateRow(i));
+        }
+        return std::move(engine);
     }
 
 
     TEST(FullScanTests, StorageInitializedCorrectly) {
-        StorageEngine engine = InitStorage();
-        EXPECT_EQ(engine.getDatabaseHeaderPage().tables.size(), 1);
+        auto engine = InitStorage();
+        EXPECT_EQ(engine->getDatabaseHeaderPage().tables.size(), 1);
     }
 
     void NextElementIs(DBCPP_Operators::FullScanOperator& scan, std::string expectedValue){
@@ -57,11 +43,11 @@ namespace FullScanTestsNS
     }
 
     TEST(FullScanTests, FullScanIteratesOverAllRecords) {
-        StorageEngine engine = InitStorage();
+        auto engine = InitStorage();
         DBCPP_Operators::FullScanOperator scan {
-            engine, "Table1"
+            engine.get(), "Table1"
         };
-        auto& tableData = engine.getDatabaseHeaderPage().tables[0].definition;
+        auto& tableData = engine->getDatabaseHeaderPage().tables[0].definition;
         NextElementIs(scan, "1");
         NextElementIs(scan, "2");
         NextElementIs(scan, "4");
@@ -77,11 +63,11 @@ namespace FullScanTestsNS
     
 
     TEST(FullScanTests, OperatorOutputIsPrintedCorrectly) {
-        StorageEngine engine = InitStorage();
+        auto engine = InitStorage();
         DBCPP_Operators::FullScanOperator scan {
-            engine, "Table1"
+            engine.get(), "Table1"
         };
-        auto& tableData = engine.getDatabaseHeaderPage().tables[0].definition;
+        auto& tableData = engine->getDatabaseHeaderPage().tables[0].definition;
         auto serialized = GetSerializedOpearatorOutput(scan, tableData);
         EXPECT_EQ(serialized,  "Column1\n1\n2\n4\n11\n12\n14\n21\n22\n24\n");
     }

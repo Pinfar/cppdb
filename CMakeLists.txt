@@ -32,6 +32,8 @@ target_sources(
   tests/operators_test.cpp
   storage/storage.cpp
   storage/storage.h
+  storage/dbwriter.cpp
+  storage/dbwriter.h
   metadata/cell.h
   utils/formatter.cpp
   utils/formatter.h
