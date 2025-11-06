@@ -5,8 +5,10 @@
 #include "../metadata/cell.h"
 #include "../utils/formatter.h"
 #include "../storage/dbwriter.h"
+#include "../storage/dbreader.h"
 #include <gtest/gtest.h>
 #include <memory>
+#include "../sql_interface/execution_plan.h"
 
 namespace DBCPP_Operators
 {
@@ -73,6 +75,45 @@ namespace DBCPP_Operators
         
         projectionOperator->Reset();
         std::string result2 = GetSerializedOpearatorOutput(*projectionOperator, tableData);
+        EXPECT_EQ(result2,  "Column2;Column1\nG;21\n");
+    }
+
+    TEST(WhereOperatorTest, CreatingExecutionPlanWorks) 
+    {
+        using namespace DBCPP_SqlInterface;
+
+        auto engine = InitStorage();
+
+        auto scan = std::unique_ptr<PlanNode>( new PlanNode{
+            DbOperator::TableAccess,
+            { std::string("Table1")},
+            {},
+            {}
+        }); 
+        auto where = std::unique_ptr<PlanNode>( new PlanNode{
+            DbOperator::Filter,
+            {ConditionDefinition{ConditionType::Eq,ColumnType::Int, 0, 21, -1 }},
+            std::move(scan),
+            {}
+        });         
+        auto projectionOperator = std::unique_ptr<PlanNode>( new PlanNode{
+            DbOperator::Projection,
+            {ProjectionDefinition{{1,0}}},
+            std::move(where),
+            {}
+        }); 
+        ExecutionPlan executionPlan {
+            std::move(projectionOperator)
+        };
+        DBCPP_Storage::DBReader reader {engine.get()};
+        auto execution = reader.ExecutePlan(std::move(executionPlan));
+          
+        auto tableData = execution->GetMetadata();
+        std::string result = GetSerializedOpearatorOutput(*execution, tableData);
+        EXPECT_EQ(result,  "Column2;Column1\nG;21\n");
+        
+        execution->Reset();
+        std::string result2 = GetSerializedOpearatorOutput(*execution, tableData);
         EXPECT_EQ(result2,  "Column2;Column1\nG;21\n");
     }
 }

@@ -1,4 +1,4 @@
-rm -rf build
-cmake -S . -B build
+# rm -rf build
+# cmake -S . -B build
 cmake --build build
 ctest --test-dir ./build

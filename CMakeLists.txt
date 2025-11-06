@@ -34,6 +34,8 @@ target_sources(
   storage/storage.h
   storage/dbwriter.cpp
   storage/dbwriter.h
+  storage/dbreader.cpp
+  storage/dbreader.h
   metadata/cell.h
   utils/formatter.cpp
   utils/formatter.h
@@ -48,6 +50,7 @@ target_sources(
   operators/where_operator.h
   operators/projection_operator.cpp
   operators/projection_operator.h
+  sql_interface/execution_plan.h
 )
 
 target_link_libraries(
