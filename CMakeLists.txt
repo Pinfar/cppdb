@@ -30,6 +30,7 @@ target_sources(
   tests/full_scan_test.cpp
   tests/conditions_test.cpp
   tests/operators_test.cpp
+  tests/parser_test.cpp
   storage/storage.cpp
   storage/storage.h
   storage/dbwriter.cpp
@@ -51,6 +52,8 @@ target_sources(
   operators/projection_operator.cpp
   operators/projection_operator.h
   sql_interface/execution_plan.h
+  sql_interface/parser.h
+  sql_interface/parser.cpp
 )
 
 target_link_libraries(
