@@ -63,7 +63,7 @@ namespace DBCPP::SqlInterface{
 
     Token Parser::createToken(TokenType type)
     {
-        Token token {type, m_source, m_offset-m_length, m_length, m_line, m_position};
+        Token token {type, m_source, m_offset-m_length, m_length, m_line, m_position-m_length+1};
         m_length = 0;
         return token;
     }

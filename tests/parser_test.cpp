@@ -54,6 +54,15 @@ namespace DBCPP::SqlInterface
         EXPECT_EQ(result[4].position, 1);
     }
 
+    TEST(ParserTest, LinesAndPositionsOfMulticharTokensAreCorrect){
+        std::string source = "  <>";
+        Parser parser {&source};
+        auto result = parser.tokenizeSource();
+        ASSERT_EQ(result.size(), 2);
+        EXPECT_EQ(result[0].line, 1);
+        EXPECT_EQ(result[0].position, 3);
+    }
+
     TEST(ParserTest, MetadataWorks){
         std::string source = "   <>   ";
         Parser parser {&source};
