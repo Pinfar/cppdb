@@ -34,6 +34,7 @@ namespace DBCPP::SqlInterface{
             char peek();
             void consumeWhitespaces();
             Token createToken(TokenType type);
+            Token consumeIdentifier();
         public:
             Parser(std::string* source):m_source(source){}
             std::vector<Token> tokenizeSource();

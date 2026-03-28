@@ -63,6 +63,29 @@ namespace DBCPP::SqlInterface
         EXPECT_EQ(result[0].position, 3);
     }
 
+    TEST(ParserTest, IdentifiersWork){
+        std::string source = "aaa bbb\nccccccddsa";
+        Parser parser {&source};
+        auto result = parser.tokenizeSource();
+        ASSERT_EQ(result.size(), 4);
+        for(int i=0;i<result.size()-2;i++)
+        {
+            EXPECT_EQ(result[i].type, TokenType::Identifier);
+        }
+    }
+
+    TEST(ParserTest, IdentifiersMixedWithOperatorsWork){
+        std::string source = "aaa>bbb<>ccc";
+        Parser parser {&source};
+        auto result = parser.tokenizeSource();
+        ASSERT_EQ(result.size(), 6);
+        EXPECT_EQ(result[0].type, TokenType::Identifier);
+        EXPECT_EQ(result[1].type, TokenType::Gt);
+        EXPECT_EQ(result[2].type, TokenType::Identifier);
+        EXPECT_EQ(result[3].type, TokenType::Neq);
+        EXPECT_EQ(result[4].type, TokenType::Identifier);
+    }
+
     TEST(ParserTest, MetadataWorks){
         std::string source = "   <>   ";
         Parser parser {&source};

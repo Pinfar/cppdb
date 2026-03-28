@@ -1,7 +1,12 @@
 #include "parser.h"
 namespace DBCPP::SqlInterface{
 
-    
+    static bool isAlpha(char current)
+    {
+        return current >= 'a' && current <='z' 
+            || current >='A' && current <='Z' 
+            || current == '_';
+    }
 
     Token Parser::nextToken()
     {
@@ -29,7 +34,14 @@ namespace DBCPP::SqlInterface{
             case '>':
                 return createToken(TokenType::Gt);
             default:
-                return createToken(TokenType::Invalid);
+                if(isAlpha(current))
+                {
+                    return consumeIdentifier();
+                }
+                else 
+                {
+                    return createToken(TokenType::Invalid);
+                }
 
         }
     }
@@ -66,6 +78,12 @@ namespace DBCPP::SqlInterface{
         Token token {type, m_source, m_offset-m_length, m_length, m_line, m_position-m_length+1};
         m_length = 0;
         return token;
+    }
+
+    Token Parser::consumeIdentifier()
+    {
+        while(isAlpha(peek())) consume();
+        return createToken(TokenType::Identifier);
     }
 
     std::vector<Token> Parser::tokenizeSource()
