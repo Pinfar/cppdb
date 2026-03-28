@@ -10,6 +10,9 @@ namespace DBCPP::SqlInterface{
         Gt,
         Lt,
         Eof,
+        Select,
+        From,
+        Where,
         Invalid
     };
 

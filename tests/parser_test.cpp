@@ -3,38 +3,48 @@
 
 namespace DBCPP::SqlInterface
 {
+    static void checkOrderOfTokens(std::vector<Token> actualTokens, std::vector<TokenType> expectedOrder){
+        ASSERT_EQ(actualTokens.size(), expectedOrder.size()+1);
+        for(int i=0;i<expectedOrder.size();i++){
+            EXPECT_EQ(actualTokens[i].type, expectedOrder[i]);
+        }
+        EXPECT_EQ(actualTokens[actualTokens.size()-1].type, TokenType::Eof);
+    }
+
+    static void checkOrderOfTokens(std::string source, std::vector<TokenType> expectedOrder)
+    {
+        Parser parser {&source};
+        auto result = parser.tokenizeSource();
+        checkOrderOfTokens(result, expectedOrder);
+    }
+
     TEST(ParserTest, EmptyQueryEmitsEOF) {
         std::string source = "";
         Parser parser {&source};
         auto result = parser.tokenizeSource();
-        EXPECT_EQ(result.size(), 1);
-        EXPECT_EQ(result[0].type, TokenType::Eof);
+        checkOrderOfTokens(result,{});
     }
 
     TEST(ParserTest, PrimitivesAreEmited){
-        std::string source = ",.=<>><";
-        Parser parser {&source};
-        auto result = parser.tokenizeSource();
-        ASSERT_EQ(result.size(), 7);
-        EXPECT_EQ(result[0].type, TokenType::Comma);
-        EXPECT_EQ(result[1].type, TokenType::Dot);
-        EXPECT_EQ(result[2].type, TokenType::Eq);
-        EXPECT_EQ(result[3].type, TokenType::Neq);
-        EXPECT_EQ(result[4].type, TokenType::Gt);
-        EXPECT_EQ(result[5].type, TokenType::Lt);
-        EXPECT_EQ(result[6].type, TokenType::Eof);
+        checkOrderOfTokens(",.=<>><",{
+            TokenType::Comma,
+            TokenType::Dot,
+            TokenType::Eq,
+            TokenType::Neq,
+            TokenType::Gt,
+            TokenType::Lt
+        });
     }
 
     TEST(ParserTest, WhitespacesAreHandled){
-        std::string source = "   .  . .\t.\r\n..";
-        Parser parser {&source};
-        auto result = parser.tokenizeSource();
-        ASSERT_EQ(result.size(), 7);
-        for(int i=0;i<result.size()-1;i++)
-        {
-            EXPECT_EQ(result[i].type, TokenType::Dot);
-        }
-        EXPECT_EQ(result[6].type, TokenType::Eof);
+        checkOrderOfTokens("   .  . .\t.\r\n..",{
+            TokenType::Dot,
+            TokenType::Dot,
+            TokenType::Dot,
+            TokenType::Dot,
+            TokenType::Dot,
+            TokenType::Dot
+        });
     }
 
     TEST(ParserTest, LinesAndPositionsAreCorrect){
@@ -64,37 +74,49 @@ namespace DBCPP::SqlInterface
     }
 
     TEST(ParserTest, IdentifiersWork){
-        std::string source = "aaa bbb\nccccccddsa";
-        Parser parser {&source};
-        auto result = parser.tokenizeSource();
-        ASSERT_EQ(result.size(), 4);
-        for(int i=0;i<result.size()-2;i++)
-        {
-            EXPECT_EQ(result[i].type, TokenType::Identifier);
-        }
+        checkOrderOfTokens("aaa bbb\nccccccddsa",{
+            TokenType::Identifier,
+            TokenType::Identifier,
+            TokenType::Identifier
+        });
     }
 
     TEST(ParserTest, IdentifiersMixedWithOperatorsWork){
-        std::string source = "aaa>bbb<>ccc";
-        Parser parser {&source};
-        auto result = parser.tokenizeSource();
-        ASSERT_EQ(result.size(), 6);
-        EXPECT_EQ(result[0].type, TokenType::Identifier);
-        EXPECT_EQ(result[1].type, TokenType::Gt);
-        EXPECT_EQ(result[2].type, TokenType::Identifier);
-        EXPECT_EQ(result[3].type, TokenType::Neq);
-        EXPECT_EQ(result[4].type, TokenType::Identifier);
+        checkOrderOfTokens("aaa>bbb<>ccc",{
+            TokenType::Identifier,
+            TokenType::Gt,
+            TokenType::Identifier,
+            TokenType::Neq,
+            TokenType::Identifier
+        });
+    }
+
+    TEST(ParserTest, SimpleQueryIsTokenized){
+        checkOrderOfTokens("select name, surname, pay from workers where name=surname",{
+            TokenType::Select,
+            TokenType::Identifier,
+            TokenType::Comma,
+            TokenType::Identifier,
+            TokenType::Comma,
+            TokenType::Identifier,
+            TokenType::From,
+            TokenType::Identifier,
+            TokenType::Where,
+            TokenType::Identifier,
+            TokenType::Eq,
+            TokenType::Identifier
+        });
     }
 
     TEST(ParserTest, MetadataWorks){
         std::string source = "   <>   ";
         Parser parser {&source};
         auto result = parser.tokenizeSource();
-        ASSERT_EQ(result.size(), 2);
         auto token = result[0];
-        EXPECT_EQ(token.type, TokenType::Neq);
         EXPECT_EQ(token.source->substr(token.beginOffset, token.length), "<>");
-        EXPECT_EQ(result[1].type, TokenType::Eof);
+        checkOrderOfTokens(result,{
+            TokenType::Neq
+        });
     }
 
 

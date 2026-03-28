@@ -83,7 +83,16 @@ namespace DBCPP::SqlInterface{
     Token Parser::consumeIdentifier()
     {
         while(isAlpha(peek())) consume();
-        return createToken(TokenType::Identifier);
+        auto value = m_source->substr(m_offset-m_length, m_length);
+        auto type = TokenType::Identifier;
+        if(value == "select"){
+            type = TokenType::Select;
+        } else if (value == "from"){
+            type = TokenType::From;
+        } else if (value == "where") {
+            type = TokenType::Where;
+        }
+        return createToken(type);
     }
 
     std::vector<Token> Parser::tokenizeSource()
