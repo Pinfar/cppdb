@@ -37,6 +37,23 @@ namespace DBCPP::SqlInterface
         EXPECT_EQ(result[6].type, TokenType::Eof);
     }
 
+    TEST(ParserTest, LinesAndPositionsAreCorrect){
+        std::string source = "..\n\n.  .\n.";
+        Parser parser {&source};
+        auto result = parser.tokenizeSource();
+        ASSERT_EQ(result.size(), 6);
+        EXPECT_EQ(result[0].line, 1);
+        EXPECT_EQ(result[0].position, 1);
+        EXPECT_EQ(result[1].line, 1);
+        EXPECT_EQ(result[1].position, 2);
+        EXPECT_EQ(result[2].line, 3);
+        EXPECT_EQ(result[2].position, 1);
+        EXPECT_EQ(result[3].line, 3);
+        EXPECT_EQ(result[3].position, 4);
+        EXPECT_EQ(result[4].line, 4);
+        EXPECT_EQ(result[4].position, 1);
+    }
+
     TEST(ParserTest, MetadataWorks){
         std::string source = "   <>   ";
         Parser parser {&source};
@@ -44,7 +61,7 @@ namespace DBCPP::SqlInterface
         ASSERT_EQ(result.size(), 2);
         auto token = result[0];
         EXPECT_EQ(token.type, TokenType::Neq);
-        EXPECT_EQ(token.source->substr(token.beginPosition, token.length), "<>");
+        EXPECT_EQ(token.source->substr(token.beginOffset, token.length), "<>");
         EXPECT_EQ(result[1].type, TokenType::Eof);
     }
 

@@ -9,48 +9,63 @@ namespace DBCPP::SqlInterface{
         char current = consume();
         switch(current){
             case '\0':
-                return Token{TokenType::Eof, m_source, m_position-1, 1 };
+                return createToken(TokenType::Eof);
             case '.':
-                return Token{TokenType::Dot, m_source, m_position-1, 1 };
+                return createToken(TokenType::Dot);
             case ',':
-                return Token{TokenType::Comma, m_source, m_position-1, 1 };
+                return createToken(TokenType::Comma);
             case '=':
-                return Token{TokenType::Eq, m_source, m_position-1, 1 };
+                return createToken(TokenType::Eq);
             case '<':
                 if(peek() == '>')
                 {
                     consume();
-                    return Token{TokenType::Neq, m_source, m_position-2, 2 };
+                    return createToken(TokenType::Neq);
                 }
                 else 
                 {
-                    return Token{TokenType::Lt, m_source, m_position-1, 1 };
+                    return createToken(TokenType::Lt);
                 }
             case '>':
-                return Token{TokenType::Gt, m_source, m_position-1, 1 };
+                return createToken(TokenType::Gt);
             default:
-                return Token{TokenType::Invalid, m_source, m_position-1, 1 };
+                return createToken(TokenType::Invalid);
 
         }
     }
 
     char Parser::consume()
     {
-        char current = (*m_source)[m_position];
+        char current = (*m_source)[m_offset];
+        m_offset++;
+        m_length++;
         m_position++;
         return current;
     }
 
     char Parser::peek()
     {
-        return (*m_source)[m_position];
+        return (*m_source)[m_offset];
     }
 
     void Parser::consumeWhitespaces()
     {
         for(char x = peek(); x == ' ' || x== '\t' || x=='\n' || x=='\r'; x = peek()){
             consume();
+            if(x=='\n'){
+                m_line++;
+                m_position=0;
+            }
         }
+        //reset length, because we start with new token after whitespace
+        m_length = 0;
+    }
+
+    Token Parser::createToken(TokenType type)
+    {
+        Token token {type, m_source, m_offset-m_length, m_length, m_line, m_position};
+        m_length = 0;
+        return token;
     }
 
     std::vector<Token> Parser::tokenizeSource()
