@@ -13,6 +13,8 @@ namespace DBCPP::SqlInterface{
         Select,
         From,
         Where,
+        Number,
+        Star,
         Invalid
     };
 
@@ -38,6 +40,7 @@ namespace DBCPP::SqlInterface{
             void consumeWhitespaces();
             Token createToken(TokenType type);
             Token consumeIdentifier();
+            Token consumeNumber();
         public:
             Parser(std::string* source):m_source(source){}
             std::vector<Token> tokenizeSource();

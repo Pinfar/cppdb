@@ -108,6 +108,19 @@ namespace DBCPP::SqlInterface
         });
     }
 
+    TEST(ParserTest, QueryWithNumbersIsTokenized){
+        checkOrderOfTokens("select * from workers where name=1230",{
+            TokenType::Select,
+            TokenType::Star,
+            TokenType::From,
+            TokenType::Identifier,
+            TokenType::Where,
+            TokenType::Identifier,
+            TokenType::Eq,
+            TokenType::Number
+        });
+    }
+
     TEST(ParserTest, MetadataWorks){
         std::string source = "   <>   ";
         Parser parser {&source};

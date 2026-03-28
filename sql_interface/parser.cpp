@@ -8,6 +8,11 @@ namespace DBCPP::SqlInterface{
             || current == '_';
     }
 
+    static bool isNumber(char current)
+    {
+        return current >= '0' && current <='9';
+    }
+
     Token Parser::nextToken()
     {
         consumeWhitespaces();
@@ -33,10 +38,16 @@ namespace DBCPP::SqlInterface{
                 }
             case '>':
                 return createToken(TokenType::Gt);
+            case '*':
+                return createToken(TokenType::Star);
             default:
                 if(isAlpha(current))
                 {
                     return consumeIdentifier();
+                }
+                else if(isNumber(current))
+                {
+                    return consumeNumber();
                 }
                 else 
                 {
@@ -93,6 +104,12 @@ namespace DBCPP::SqlInterface{
             type = TokenType::Where;
         }
         return createToken(type);
+    }
+
+    Token Parser::consumeNumber()
+    {
+        while(isNumber(peek())) consume();
+        return createToken(TokenType::Number);
     }
 
     std::vector<Token> Parser::tokenizeSource()
