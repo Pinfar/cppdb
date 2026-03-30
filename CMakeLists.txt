@@ -54,6 +54,8 @@ target_sources(
   sql_interface/execution_plan.h
   sql_interface/parser.h
   sql_interface/parser.cpp
+  sql_interface/compiler.h
+  sql_interface/compiler.cpp
 )
 
 target_link_libraries(

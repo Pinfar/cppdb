@@ -1,4 +1,5 @@
 #include "../sql_interface/parser.h"
+#include "../sql_interface/compiler.h"
 #include <gtest/gtest.h>
 
 namespace DBCPP::SqlInterface
@@ -130,6 +131,35 @@ namespace DBCPP::SqlInterface
         checkOrderOfTokens(result,{
             TokenType::Neq
         });
+    }
+
+    static Select_ptr compileSql(std::string& sql) 
+    {
+        Parser parser {&sql};
+        auto tokens = parser.tokenizeSource();
+        Compiler compiler {tokens};
+        return compiler.Compile();
+    }
+
+    TEST(CompilerTest, VectorIsMoved) {
+        std::string sql = "select a from b";
+        Parser parser {&sql};
+        auto tokens = parser.tokenizeSource();
+        ASSERT_EQ(tokens.size(),5);
+        Compiler compiler {tokens};
+        ASSERT_EQ(tokens.size(),0);
+    }
+
+    TEST(CompilerTest, SelectStatementIsCompiled) {
+        std::string sql = "select a,b,c from x";
+        auto select = compileSql(sql);
+        ASSERT_TRUE(select);
+        ASSERT_EQ(select->Columns.size(), 3);
+        EXPECT_EQ(select->Columns[0], "a");
+        EXPECT_EQ(select->Columns[1], "b");
+        EXPECT_EQ(select->Columns[2], "c");
+        ASSERT_TRUE(select->From);
+        EXPECT_EQ(select->From->TableName, "x");
     }
 
 

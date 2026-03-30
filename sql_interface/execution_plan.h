@@ -42,5 +42,5 @@ namespace DBCPP_SqlInterface {
     struct ExecutionPlan
     {
         std::unique_ptr<PlanNode> rootNode;
-    };   
+    };
 }
