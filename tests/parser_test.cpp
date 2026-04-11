@@ -154,10 +154,10 @@ namespace DBCPP::SqlInterface
         std::string sql = "select a,b,c from x";
         auto select = compileSql(sql);
         ASSERT_TRUE(select);
-        ASSERT_EQ(select->Columns.size(), 3);
-        EXPECT_EQ(select->Columns[0], "a");
-        EXPECT_EQ(select->Columns[1], "b");
-        EXPECT_EQ(select->Columns[2], "c");
+        ASSERT_EQ(select->ColumnList->Columns.size(), 3);
+        EXPECT_EQ(select->ColumnList->Columns[0], "a");
+        EXPECT_EQ(select->ColumnList->Columns[1], "b");
+        EXPECT_EQ(select->ColumnList->Columns[2], "c");
         ASSERT_TRUE(select->From);
         EXPECT_EQ(select->From->TableName, "x");
     }

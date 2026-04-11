@@ -17,15 +17,22 @@ namespace DBCPP::SqlInterface{
     struct FromNode 
     {
         std::string TableName;
-        std::unique_ptr<WhereNode> Where;
     };
 
     using From_ptr = std::unique_ptr<FromNode>;
 
-    struct SelectNode
+    struct SelectColumnList 
     {
         std::vector<std::string> Columns;
+    };
+
+    using SelectColumnList_ptr = std::unique_ptr<SelectColumnList>;
+
+    struct SelectNode
+    {
+        SelectColumnList_ptr ColumnList;
         From_ptr From;
+        Where_ptr Where;
     };
 
     using Select_ptr = std::unique_ptr<SelectNode>;
@@ -48,6 +55,7 @@ namespace DBCPP::SqlInterface{
         Select_ptr Select();
         From_ptr From();
         Where_ptr Where();
+        SelectColumnList_ptr ColumnList();
 
         public:
             Compiler(std::vector<Token> &tokens): m_tokens(std::move(tokens)){

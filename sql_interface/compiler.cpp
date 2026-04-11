@@ -39,6 +39,29 @@ namespace DBCPP::SqlInterface
     {
         Consume(TokenType::Select);
         auto node = std::make_unique<SelectNode>();
+        node->ColumnList = ColumnList();
+        node->From = From();
+        node->Where = Where();
+        Consume(TokenType::Eof);
+        return node;
+    }
+
+    From_ptr Compiler::From()
+    {
+        Consume(TokenType::From);
+        Token table = Consume(TokenType::Identifier);
+        std::string tableName = GetTokenValue(table);
+        return std::unique_ptr<FromNode>(new FromNode{tableName});
+    }
+
+    Where_ptr Compiler::Where()
+    {
+        return Where_ptr();
+    }
+
+    SelectColumnList_ptr Compiler::ColumnList()
+    {
+        auto node = std::make_unique<SelectColumnList>();
         bool firstColumn = true;
         while(true)
         {
@@ -52,22 +75,7 @@ namespace DBCPP::SqlInterface
             }
             Consume(TokenType::Comma);
         }
-        node->From = From();
-        Consume(TokenType::Eof);
         return node;
-    }
-
-    From_ptr Compiler::From()
-    {
-        Consume(TokenType::From);
-        Token table = Consume(TokenType::Identifier);
-        std::string tableName = GetTokenValue(table);
-        return std::unique_ptr<FromNode>(new FromNode{tableName, Where()});
-    }
-
-    Where_ptr Compiler::Where()
-    {
-        return Where_ptr();
     }
 
     Select_ptr Compiler::Compile()
