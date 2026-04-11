@@ -26,6 +26,8 @@ namespace DBCPP::SqlInterface{
         int length;
         int line;
         int position;
+
+        std::string GetTokenValue();
     };
 
     class Parser {

@@ -5,6 +5,7 @@ namespace DBCPP::SqlInterface
     void Compiler::Error(std::string message, Token token)
     {
         m_compilationError = CompilationError { message, token };
+        throw std::domain_error("Compilation error!");
     }
 
     static std::string GetTokenValue(Token token)
@@ -18,7 +19,6 @@ namespace DBCPP::SqlInterface
         if(token.type != type)
         {
              Error("Invalid token type!", token);
-             throw std::domain_error("Compilation error!");
         }
         return token;
     }
@@ -39,9 +39,9 @@ namespace DBCPP::SqlInterface
     {
         Consume(TokenType::Select);
         auto node = std::make_unique<SelectNode>();
-        node->ColumnList = ColumnList();
-        node->From = From();
-        node->Where = Where();
+        node->columnList = ColumnList();
+        node->from = From();
+        if(Peek().type == TokenType::Where) node->where = Where();
         Consume(TokenType::Eof);
         return node;
     }
@@ -56,7 +56,10 @@ namespace DBCPP::SqlInterface
 
     Where_ptr Compiler::Where()
     {
-        return Where_ptr();
+        auto node = std::make_unique<WhereNode>();
+        Consume(TokenType::Where);
+        node->condition = Condition();
+        return node;
     }
 
     SelectColumnList_ptr Compiler::ColumnList()
@@ -67,7 +70,7 @@ namespace DBCPP::SqlInterface
         {
             Token column = Consume(TokenType::Identifier);
             auto name = GetTokenValue(column);
-            node->Columns.push_back(std::move(name));
+            node->columns.push_back(std::move(name));
 
             if(Peek().type == TokenType::From)
             {
@@ -76,6 +79,27 @@ namespace DBCPP::SqlInterface
             Consume(TokenType::Comma);
         }
         return node;
+    }
+
+    ConditionNode_ptr Compiler::Condition()
+    {
+        auto node = std::make_unique<ConditionNode>();
+        node->lhs = Expression();
+        node->oper = Advance(); //This is not correct -> token that is not an operator should not be consumed here.
+        node->rhs = Expression();
+        return node;
+    }
+
+    Expr_ptr Compiler::Expression()
+    {
+        auto node = std::make_unique<ExpressionNode>();
+        Token token = Advance();
+        if(token.type == TokenType::Number || token.type == TokenType::Identifier){
+            node->token = token;
+            return node;
+        }
+        Error("Expression can be only number or identifier.", token);
+        return Expr_ptr();
     }
 
     Select_ptr Compiler::Compile()

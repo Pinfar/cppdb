@@ -154,12 +154,24 @@ namespace DBCPP::SqlInterface
         std::string sql = "select a,b,c from x";
         auto select = compileSql(sql);
         ASSERT_TRUE(select);
-        ASSERT_EQ(select->ColumnList->Columns.size(), 3);
-        EXPECT_EQ(select->ColumnList->Columns[0], "a");
-        EXPECT_EQ(select->ColumnList->Columns[1], "b");
-        EXPECT_EQ(select->ColumnList->Columns[2], "c");
-        ASSERT_TRUE(select->From);
-        EXPECT_EQ(select->From->TableName, "x");
+        ASSERT_TRUE(select->columnList);
+        ASSERT_EQ(select->columnList->columns.size(), 3);
+        EXPECT_EQ(select->columnList->columns[0], "a");
+        EXPECT_EQ(select->columnList->columns[1], "b");
+        EXPECT_EQ(select->columnList->columns[2], "c");
+        ASSERT_TRUE(select->from);
+        EXPECT_EQ(select->from->tableName, "x");
+    }
+
+    TEST(CompilerTest, WhereStatementIsCompiled) {
+        std::string sql = "select a,b,c from x where a=1";
+        auto select = compileSql(sql);
+        ASSERT_TRUE(select);
+        ASSERT_TRUE(select->where);
+        ASSERT_TRUE(select->where->condition);
+        EXPECT_EQ(select->where->condition->lhs->token.GetTokenValue(), "a");
+        EXPECT_EQ(select->where->condition->oper.type, TokenType::Eq);
+        EXPECT_EQ(select->where->condition->rhs->token.GetTokenValue(), "1");
     }
 
 

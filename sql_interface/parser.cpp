@@ -123,4 +123,9 @@ namespace DBCPP::SqlInterface{
         }
         return result;
     }
+
+    std::string Token::GetTokenValue()
+    {
+        return source->substr(beginOffset, length);
+    }
 }

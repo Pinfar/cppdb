@@ -6,33 +6,45 @@
 
 namespace DBCPP::SqlInterface{
     
+    struct ExpressionNode {
+        Token token;
+    };
+    using Expr_ptr = std::unique_ptr<ExpressionNode>;
+
+    struct ConditionNode {
+        Expr_ptr lhs;
+        Token oper;
+        Expr_ptr rhs;
+    };
+    using ConditionNode_ptr = std::unique_ptr<ConditionNode>;
+
     //Node defitinitions
     struct WhereNode
     {
-        //I want to implement conditions as a bytecode vm, so let's leave this empty for now
+        ConditionNode_ptr condition;
     };
 
     using Where_ptr = std::unique_ptr<WhereNode>;
 
     struct FromNode 
     {
-        std::string TableName;
+        std::string tableName;
     };
 
     using From_ptr = std::unique_ptr<FromNode>;
 
     struct SelectColumnList 
     {
-        std::vector<std::string> Columns;
+        std::vector<std::string> columns;
     };
 
     using SelectColumnList_ptr = std::unique_ptr<SelectColumnList>;
 
     struct SelectNode
     {
-        SelectColumnList_ptr ColumnList;
-        From_ptr From;
-        Where_ptr Where;
+        SelectColumnList_ptr columnList;
+        From_ptr from;
+        Where_ptr where;
     };
 
     using Select_ptr = std::unique_ptr<SelectNode>;
@@ -56,6 +68,8 @@ namespace DBCPP::SqlInterface{
         From_ptr From();
         Where_ptr Where();
         SelectColumnList_ptr ColumnList();
+        ConditionNode_ptr Condition();
+        Expr_ptr Expression();
 
         public:
             Compiler(std::vector<Token> &tokens): m_tokens(std::move(tokens)){
