@@ -1,10 +1,10 @@
-#include "compiler.h"
+#include "parser.h"
 #include <stdexcept>
 namespace DBCPP::SqlInterface 
 {
-    void Compiler::Error(std::string message, Token token)
+    void Parser::Error(std::string message, Token token)
     {
-        m_compilationError = CompilationError { message, token };
+        m_compilationError = ParsingError { message, token };
         throw std::domain_error("Compilation error!");
     }
 
@@ -13,7 +13,7 @@ namespace DBCPP::SqlInterface
         return token.source->substr(token.beginOffset, token.length);
     }
 
-    Token Compiler::Consume(TokenType type)
+    Token Parser::Consume(TokenType type)
     {
         Token token = Advance();
         if(token.type != type)
@@ -23,19 +23,19 @@ namespace DBCPP::SqlInterface
         return token;
     }
 
-    Token Compiler::Advance()
+    Token Parser::Advance()
     {
         Token token = m_tokens[m_position];
         m_position++;
         return token;
     }
 
-    Token Compiler::Peek()
+    Token Parser::Peek()
     {
         return m_tokens[m_position];
     }
 
-    Select_ptr Compiler::Select()
+    Select_ptr Parser::Select()
     {
         Consume(TokenType::Select);
         auto node = std::make_unique<SelectNode>();
@@ -46,7 +46,7 @@ namespace DBCPP::SqlInterface
         return node;
     }
 
-    From_ptr Compiler::From()
+    From_ptr Parser::From()
     {
         Consume(TokenType::From);
         Token table = Consume(TokenType::Identifier);
@@ -54,7 +54,7 @@ namespace DBCPP::SqlInterface
         return std::unique_ptr<FromNode>(new FromNode{tableName});
     }
 
-    Where_ptr Compiler::Where()
+    Where_ptr Parser::Where()
     {
         auto node = std::make_unique<WhereNode>();
         Consume(TokenType::Where);
@@ -62,7 +62,7 @@ namespace DBCPP::SqlInterface
         return node;
     }
 
-    SelectColumnList_ptr Compiler::ColumnList()
+    SelectColumnList_ptr Parser::ColumnList()
     {
         auto node = std::make_unique<SelectColumnList>();
         bool firstColumn = true;
@@ -81,7 +81,7 @@ namespace DBCPP::SqlInterface
         return node;
     }
 
-    ConditionNode_ptr Compiler::Condition()
+    ConditionNode_ptr Parser::Condition()
     {
         auto node = std::make_unique<ConditionNode>();
         node->lhs = Expression();
@@ -90,7 +90,7 @@ namespace DBCPP::SqlInterface
         return node;
     }
 
-    Expr_ptr Compiler::Expression()
+    Expr_ptr Parser::Expression()
     {
         auto node = std::make_unique<ExpressionNode>();
         Token token = Advance();
@@ -102,15 +102,15 @@ namespace DBCPP::SqlInterface
         return Expr_ptr();
     }
 
-    Select_ptr Compiler::Compile()
+    Select_ptr Parser::Parse()
     {
         return Select();
     }
 
-    CompilationError Compiler::GetError()
+    ParsingError Parser::GetError()
     {
         if(m_compilationError.has_value()) 
             return m_compilationError.value(); 
-        return CompilationError();
+        return ParsingError();
     }
 }

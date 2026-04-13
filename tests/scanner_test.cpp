@@ -1,5 +1,5 @@
 #include "../sql_interface/scanner.h"
-#include "../sql_interface/compiler.h"
+#include "../sql_interface/parser.h"
 #include <gtest/gtest.h>
 
 namespace DBCPP::SqlInterface
@@ -137,20 +137,20 @@ namespace DBCPP::SqlInterface
     {
         Scanner scanner {&sql};
         auto tokens = scanner.tokenizeSource();
-        Compiler compiler {tokens};
-        return compiler.Compile();
+        Parser parser {tokens};
+        return parser.Parse();
     }
 
-    TEST(CompilerTest, VectorIsMoved) {
+    TEST(ParserTest, VectorIsMoved) {
         std::string sql = "select a from b";
         Scanner scanner {&sql};
         auto tokens = scanner.tokenizeSource();
         ASSERT_EQ(tokens.size(),5);
-        Compiler compiler {tokens};
+        Parser parser {tokens};
         ASSERT_EQ(tokens.size(),0);
     }
 
-    TEST(CompilerTest, SelectStatementIsCompiled) {
+    TEST(ParserTest, SelectStatementIsParsed) {
         std::string sql = "select a,b,c from x";
         auto select = compileSql(sql);
         ASSERT_TRUE(select);
@@ -163,7 +163,7 @@ namespace DBCPP::SqlInterface
         EXPECT_EQ(select->from->tableName, "x");
     }
 
-    TEST(CompilerTest, WhereStatementIsCompiled) {
+    TEST(ParserTest, WhereStatementIsParsed) {
         std::string sql = "select a,b,c from x where a=1";
         auto select = compileSql(sql);
         ASSERT_TRUE(select);

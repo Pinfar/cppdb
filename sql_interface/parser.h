@@ -49,15 +49,15 @@ namespace DBCPP::SqlInterface{
 
     using Select_ptr = std::unique_ptr<SelectNode>;
 
-    struct CompilationError {
+    struct ParsingError {
         std::string message;
         Token token;
     };
 
-    class Compiler
+    class Parser
     {
         std::vector<Token> m_tokens;
-        std::optional<CompilationError> m_compilationError;
+        std::optional<ParsingError> m_compilationError;
         int m_position = 0;
 
         void Error(std::string message, Token token);
@@ -72,11 +72,11 @@ namespace DBCPP::SqlInterface{
         Expr_ptr Expression();
 
         public:
-            Compiler(std::vector<Token> &tokens): m_tokens(std::move(tokens)){
+            Parser(std::vector<Token> &tokens): m_tokens(std::move(tokens)){
 
             }
 
-            Select_ptr Compile();
-            CompilationError GetError();
+            Select_ptr Parse();
+            ParsingError GetError();
     };
 }
