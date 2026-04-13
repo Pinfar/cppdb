@@ -30,7 +30,7 @@ namespace DBCPP::SqlInterface{
         std::string GetTokenValue();
     };
 
-    class Parser {
+    class Scanner {
         private:
             std::string* m_source;
             int m_offset = 0;
@@ -45,7 +45,7 @@ namespace DBCPP::SqlInterface{
             Token consumeIdentifier();
             Token consumeNumber();
         public:
-            Parser(std::string* source):m_source(source){}
+            Scanner(std::string* source):m_source(source){}
             std::vector<Token> tokenizeSource();
     };
 }

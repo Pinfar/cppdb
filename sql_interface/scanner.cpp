@@ -1,4 +1,4 @@
-#include "parser.h"
+#include "scanner.h"
 namespace DBCPP::SqlInterface{
 
     static bool isAlpha(char current)
@@ -13,7 +13,7 @@ namespace DBCPP::SqlInterface{
         return current >= '0' && current <='9';
     }
 
-    Token Parser::nextToken()
+    Token Scanner::nextToken()
     {
         consumeWhitespaces();
         char current = consume();
@@ -57,7 +57,7 @@ namespace DBCPP::SqlInterface{
         }
     }
 
-    char Parser::consume()
+    char Scanner::consume()
     {
         char current = (*m_source)[m_offset];
         m_offset++;
@@ -66,12 +66,12 @@ namespace DBCPP::SqlInterface{
         return current;
     }
 
-    char Parser::peek()
+    char Scanner::peek()
     {
         return (*m_source)[m_offset];
     }
 
-    void Parser::consumeWhitespaces()
+    void Scanner::consumeWhitespaces()
     {
         for(char x = peek(); x == ' ' || x== '\t' || x=='\n' || x=='\r'; x = peek()){
             consume();
@@ -84,14 +84,14 @@ namespace DBCPP::SqlInterface{
         m_length = 0;
     }
 
-    Token Parser::createToken(TokenType type)
+    Token Scanner::createToken(TokenType type)
     {
         Token token {type, m_source, m_offset-m_length, m_length, m_line, m_position-m_length+1};
         m_length = 0;
         return token;
     }
 
-    Token Parser::consumeIdentifier()
+    Token Scanner::consumeIdentifier()
     {
         while(isAlpha(peek())) consume();
         auto value = m_source->substr(m_offset-m_length, m_length);
@@ -106,13 +106,13 @@ namespace DBCPP::SqlInterface{
         return createToken(type);
     }
 
-    Token Parser::consumeNumber()
+    Token Scanner::consumeNumber()
     {
         while(isNumber(peek())) consume();
         return createToken(TokenType::Number);
     }
 
-    std::vector<Token> Parser::tokenizeSource()
+    std::vector<Token> Scanner::tokenizeSource()
     {
         std::vector<Token> result;
         for(;;)

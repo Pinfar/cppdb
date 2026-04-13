@@ -1,4 +1,4 @@
-#include "../sql_interface/parser.h"
+#include "../sql_interface/scanner.h"
 #include "../sql_interface/compiler.h"
 #include <gtest/gtest.h>
 
@@ -14,19 +14,19 @@ namespace DBCPP::SqlInterface
 
     static void checkOrderOfTokens(std::string source, std::vector<TokenType> expectedOrder)
     {
-        Parser parser {&source};
-        auto result = parser.tokenizeSource();
+        Scanner scanner {&source};
+        auto result = scanner.tokenizeSource();
         checkOrderOfTokens(result, expectedOrder);
     }
 
-    TEST(ParserTest, EmptyQueryEmitsEOF) {
+    TEST(ScannerTest, EmptyQueryEmitsEOF) {
         std::string source = "";
-        Parser parser {&source};
-        auto result = parser.tokenizeSource();
+        Scanner scanner {&source};
+        auto result = scanner.tokenizeSource();
         checkOrderOfTokens(result,{});
     }
 
-    TEST(ParserTest, PrimitivesAreEmited){
+    TEST(ScannerTest, PrimitivesAreEmited){
         checkOrderOfTokens(",.=<>><",{
             TokenType::Comma,
             TokenType::Dot,
@@ -37,7 +37,7 @@ namespace DBCPP::SqlInterface
         });
     }
 
-    TEST(ParserTest, WhitespacesAreHandled){
+    TEST(ScannerTest, WhitespacesAreHandled){
         checkOrderOfTokens("   .  . .\t.\r\n..",{
             TokenType::Dot,
             TokenType::Dot,
@@ -48,10 +48,10 @@ namespace DBCPP::SqlInterface
         });
     }
 
-    TEST(ParserTest, LinesAndPositionsAreCorrect){
+    TEST(ScannerTest, LinesAndPositionsAreCorrect){
         std::string source = "..\n\n.  .\n.";
-        Parser parser {&source};
-        auto result = parser.tokenizeSource();
+        Scanner scanner {&source};
+        auto result = scanner.tokenizeSource();
         ASSERT_EQ(result.size(), 6);
         EXPECT_EQ(result[0].line, 1);
         EXPECT_EQ(result[0].position, 1);
@@ -65,16 +65,16 @@ namespace DBCPP::SqlInterface
         EXPECT_EQ(result[4].position, 1);
     }
 
-    TEST(ParserTest, LinesAndPositionsOfMulticharTokensAreCorrect){
+    TEST(ScannerTest, LinesAndPositionsOfMulticharTokensAreCorrect){
         std::string source = "  <>";
-        Parser parser {&source};
-        auto result = parser.tokenizeSource();
+        Scanner scanner {&source};
+        auto result = scanner.tokenizeSource();
         ASSERT_EQ(result.size(), 2);
         EXPECT_EQ(result[0].line, 1);
         EXPECT_EQ(result[0].position, 3);
     }
 
-    TEST(ParserTest, IdentifiersWork){
+    TEST(ScannerTest, IdentifiersWork){
         checkOrderOfTokens("aaa bbb\nccccccddsa",{
             TokenType::Identifier,
             TokenType::Identifier,
@@ -82,7 +82,7 @@ namespace DBCPP::SqlInterface
         });
     }
 
-    TEST(ParserTest, IdentifiersMixedWithOperatorsWork){
+    TEST(ScannerTest, IdentifiersMixedWithOperatorsWork){
         checkOrderOfTokens("aaa>bbb<>ccc",{
             TokenType::Identifier,
             TokenType::Gt,
@@ -92,7 +92,7 @@ namespace DBCPP::SqlInterface
         });
     }
 
-    TEST(ParserTest, SimpleQueryIsTokenized){
+    TEST(ScannerTest, SimpleQueryIsTokenized){
         checkOrderOfTokens("select name, surname, pay from workers where name=surname",{
             TokenType::Select,
             TokenType::Identifier,
@@ -109,7 +109,7 @@ namespace DBCPP::SqlInterface
         });
     }
 
-    TEST(ParserTest, QueryWithNumbersIsTokenized){
+    TEST(ScannerTest, QueryWithNumbersIsTokenized){
         checkOrderOfTokens("select * from workers where name=1230",{
             TokenType::Select,
             TokenType::Star,
@@ -122,10 +122,10 @@ namespace DBCPP::SqlInterface
         });
     }
 
-    TEST(ParserTest, MetadataWorks){
+    TEST(ScannerTest, MetadataWorks){
         std::string source = "   <>   ";
-        Parser parser {&source};
-        auto result = parser.tokenizeSource();
+        Scanner scanner {&source};
+        auto result = scanner.tokenizeSource();
         auto token = result[0];
         EXPECT_EQ(token.source->substr(token.beginOffset, token.length), "<>");
         checkOrderOfTokens(result,{
@@ -135,16 +135,16 @@ namespace DBCPP::SqlInterface
 
     static Select_ptr compileSql(std::string& sql) 
     {
-        Parser parser {&sql};
-        auto tokens = parser.tokenizeSource();
+        Scanner scanner {&sql};
+        auto tokens = scanner.tokenizeSource();
         Compiler compiler {tokens};
         return compiler.Compile();
     }
 
     TEST(CompilerTest, VectorIsMoved) {
         std::string sql = "select a from b";
-        Parser parser {&sql};
-        auto tokens = parser.tokenizeSource();
+        Scanner scanner {&sql};
+        auto tokens = scanner.tokenizeSource();
         ASSERT_EQ(tokens.size(),5);
         Compiler compiler {tokens};
         ASSERT_EQ(tokens.size(),0);
