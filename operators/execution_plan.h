@@ -4,7 +4,7 @@
 #include <any>
 #include "../metadata/cell.h"
 
-namespace DBCPP_SqlInterface {
+namespace DBCPP_Operators {
     enum class DbOperator{
         Projection = 1,
         Filter = 2,

@@ -8,7 +8,7 @@
 #include "../storage/dbreader.h"
 #include <gtest/gtest.h>
 #include <memory>
-#include "../sql_interface/execution_plan.h"
+#include "../operators/execution_plan.h"
 
 namespace DBCPP_Operators
 {
@@ -80,8 +80,6 @@ namespace DBCPP_Operators
 
     TEST(WhereOperatorTest, CreatingExecutionPlanWorks) 
     {
-        using namespace DBCPP_SqlInterface;
-
         auto engine = InitStorage();
 
         auto scan = std::unique_ptr<PlanNode>( new PlanNode{

@@ -6,7 +6,6 @@
 
 namespace DBCPP_Storage{
     using namespace DBCPP_Operators;
-    using namespace DBCPP_SqlInterface;
 
     std::unique_ptr<AbstractDbOperator> DBReader::ExecutePlan(ExecutionPlan executionPlan){
         return ConvertNode(executionPlan.rootNode.get());

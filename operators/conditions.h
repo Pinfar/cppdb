@@ -1,7 +1,7 @@
 #pragma once
 #include"../metadata/cell.h"
 #include <memory>
-#include"../sql_interface/execution_plan.h"
+#include"execution_plan.h"
 
 namespace DBCPP_Operators
 {
@@ -24,20 +24,20 @@ namespace DBCPP_Operators
 
 
     template<typename T>
-    static bool IsEqual(DataRow* row, DBCPP_SqlInterface::ConditionDefinition definition){
+    static bool IsEqual(DataRow* row, ConditionDefinition definition){
         return std::get<T>(row->cells[definition.columnIdx].value) == std::any_cast<T>(definition.value);
     }
     
     class ParametrizedCondition : public Condition
     {
         private:
-            DBCPP_SqlInterface::ConditionDefinition definition;
+            ConditionDefinition definition;
             void SetIsMatch(){
                 IsMatchPtr = IsEqual<int>;
             }
-            bool (*IsMatchPtr)(DataRow*, DBCPP_SqlInterface::ConditionDefinition);
+            bool (*IsMatchPtr)(DataRow*, ConditionDefinition);
         public:
-            ParametrizedCondition(DBCPP_SqlInterface::ConditionDefinition definition):definition(definition){
+            ParametrizedCondition(ConditionDefinition definition):definition(definition){
                 SetIsMatch();
             }
 
