@@ -39,6 +39,8 @@ namespace DBCPP_Operators {
         std::unique_ptr<PlanNode> rparent; //right parent is reserved for joins,unions etc
     };
 
+    using PlanNode_ptr = std::unique_ptr<PlanNode>;
+
     struct ExecutionPlan
     {
         std::unique_ptr<PlanNode> rootNode;

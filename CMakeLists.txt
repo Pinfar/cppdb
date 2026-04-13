@@ -51,11 +51,13 @@ target_sources(
   operators/where_operator.h
   operators/projection_operator.cpp
   operators/projection_operator.h
-  sql_interface/execution_plan.h
+  operators/execution_plan.h
   sql_interface/scanner.h
   sql_interface/scanner.cpp
   sql_interface/parser.h
   sql_interface/parser.cpp
+  query_engine/compiler.h
+  query_engine/compiler.cpp
 )
 
 target_link_libraries(

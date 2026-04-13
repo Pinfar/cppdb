@@ -9,6 +9,9 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include "../operators/execution_plan.h"
+#include "../sql_interface/scanner.h"
+#include "../sql_interface/parser.h"
+#include "../query_engine/compiler.h"
 
 namespace DBCPP_Operators
 {
@@ -113,5 +116,30 @@ namespace DBCPP_Operators
         execution->Reset();
         std::string result2 = GetSerializedOpearatorOutput(*execution, tableData);
         EXPECT_EQ(result2,  "Column2;Column1\nG;21\n");
+    }
+
+    using namespace DBCPP::SqlInterface;
+
+    static Select_ptr compileSql(std::string& sql) 
+    {
+        Scanner scanner {&sql};
+        auto tokens = scanner.tokenizeSource();
+        Parser parser {tokens};
+        return parser.Parse();
+    }
+
+    TEST(WhereOperatorTest, SqlCanBeExecuted) 
+    {
+        auto engine = InitStorage();
+        std::string sql = "select Column2,Column1 from Table1 where Column1=21";
+        auto select = compileSql(sql);
+        DBCPP::QueryEngine::Compiler compiler;
+        ExecutionPlan executionPlan  = compiler.PlanQuery(select.get());
+        DBCPP_Storage::DBReader reader {engine.get()};
+        auto execution = reader.ExecutePlan(std::move(executionPlan));
+          
+        auto tableData = execution->GetMetadata();
+        std::string result = GetSerializedOpearatorOutput(*execution, tableData);
+        EXPECT_EQ(result,  "Column2;Column1\nG;21\n");
     }
 }

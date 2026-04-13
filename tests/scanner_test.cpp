@@ -82,6 +82,12 @@ namespace DBCPP::SqlInterface
         });
     }
 
+    TEST(ScannerTest, IdentifiersWithNumbersWork){
+        checkOrderOfTokens("aa123a123_21lksdaf",{
+            TokenType::Identifier
+        });
+    }
+
     TEST(ScannerTest, IdentifiersMixedWithOperatorsWork){
         checkOrderOfTokens("aaa>bbb<>ccc",{
             TokenType::Identifier,

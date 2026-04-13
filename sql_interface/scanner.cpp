@@ -93,7 +93,7 @@ namespace DBCPP::SqlInterface{
 
     Token Scanner::consumeIdentifier()
     {
-        while(isAlpha(peek())) consume();
+        while(isAlpha(peek()) || isNumber(peek()) || peek() == '_') consume(); //missing numbers in identifiers
         auto value = m_source->substr(m_offset-m_length, m_length);
         auto type = TokenType::Identifier;
         if(value == "select"){
