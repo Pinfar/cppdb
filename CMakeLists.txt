@@ -58,6 +58,8 @@ target_sources(
   sql_interface/parser.cpp
   query_engine/compiler.h
   query_engine/compiler.cpp
+  utils/test_dbengine.h
+  utils/test_dbengine.cpp
 )
 
 target_link_libraries(
