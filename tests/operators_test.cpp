@@ -88,12 +88,4 @@ namespace DBCPP_Operators
         std::string result2 = GetSerializedOpearatorOutput(*execution, tableData);
         EXPECT_EQ(result2,  "Column2;Column1\nG;21\n");
     }
-
-    TEST(WhereOperatorTest, SqlCanBeExecuted) 
-    {
-        DBCPP::Utils::TestDbEngine engine;
-        std::string sql = "select Column2,Column1 from Table1 where Column1=21";
-        std::string result = engine.RunSql(sql);
-        EXPECT_EQ(result,  "Column2;Column1\nG;21\n");
-    }
 }

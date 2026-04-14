@@ -31,6 +31,7 @@ target_sources(
   tests/conditions_test.cpp
   tests/operators_test.cpp
   tests/scanner_test.cpp
+  tests/sql_test.cpp
   storage/storage.cpp
   storage/storage.h
   storage/dbwriter.cpp
