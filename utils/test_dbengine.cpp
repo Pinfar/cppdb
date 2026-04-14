@@ -58,7 +58,8 @@ namespace DBCPP::Utils {
     {
         
         auto select = CompileSql(sql);
-        DBCPP::QueryEngine::Compiler compiler;
+        DBCPP::Storage::DbMetadata metadata {GetStorage()};
+        DBCPP::QueryEngine::Compiler compiler{metadata};
         DBCPP_Operators::ExecutionPlan executionPlan  = compiler.PlanQuery(select.get());
         DBCPP_Storage::DBReader reader {GetStorage()};
         auto execution = reader.ExecutePlan(std::move(executionPlan));

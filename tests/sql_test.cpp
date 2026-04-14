@@ -13,4 +13,9 @@ namespace DBCPP::SqlTest{
     {
         RunTest("select Column2,Column1 from Table1 where Column1=21","Column2;Column1\nG;21\n");
     }
+
+    TEST(SqlTest, SqlWithProjection) 
+    {
+        RunTest("select Column1,Column2 from Table1 where Column1=21","Column1;Column2\n21;G\n");
+    }
 }

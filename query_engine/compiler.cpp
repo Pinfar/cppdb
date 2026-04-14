@@ -16,6 +16,7 @@ namespace DBCPP::QueryEngine {
 
     DBCPP_Operators::PlanNode_ptr Compiler::CreateTableAccessNode(DBCPP::SqlInterface::SelectNode *node)
     {
+        m_currentTableContext = m_metadata.GetTableDefinition(node->from->tableName);
         return std::unique_ptr<PlanNode>( new PlanNode{
             DbOperator::TableAccess,
             { node->from->tableName },
@@ -39,10 +40,24 @@ namespace DBCPP::QueryEngine {
     }
     DBCPP_Operators::PlanNode_ptr Compiler::CreateProjectionNode(DBCPP::SqlInterface::SelectNode *node)
     {
-        auto where = CreateFilterNode(node);         
+        auto where = CreateFilterNode(node);
+        std::vector<int> columns;
+        auto& tableColumns = m_currentTableContext->columns;
+        for(auto& column: node->columnList->columns)
+        {
+            for(int i=0; i<tableColumns.size();i++)
+            {
+                if(tableColumns[i].name == column)
+                {
+                    columns.push_back(i);
+                    break;
+                }
+            }
+        }
+        
         return std::unique_ptr<PlanNode>( new PlanNode{
             DbOperator::Projection,
-            {ProjectionDefinition{{1,0}}},
+            {ProjectionDefinition{std::move(columns)}},
             std::move(where),
             {}
         });

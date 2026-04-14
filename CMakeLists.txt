@@ -38,6 +38,8 @@ target_sources(
   storage/dbwriter.h
   storage/dbreader.cpp
   storage/dbreader.h
+  storage/dbmetadata.h
+  storage/dbmetadata.cpp
   metadata/cell.h
   utils/formatter.cpp
   utils/formatter.h
