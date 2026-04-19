@@ -5,7 +5,7 @@ namespace DBCPP::SqlInterface
     void Parser::Error(std::string message, Token token)
     {
         m_compilationError = ParsingError { message, token };
-        throw std::domain_error("Compilation error!");
+        throw std::domain_error("Parsing error! "+message);
     }
 
     static std::string GetTokenValue(Token token)
@@ -94,11 +94,11 @@ namespace DBCPP::SqlInterface
     {
         auto node = std::make_unique<ExpressionNode>();
         Token token = Advance();
-        if(token.type == TokenType::Number || token.type == TokenType::Identifier){
+        if(token.type == TokenType::Number || token.type == TokenType::Identifier || token.type == TokenType::String){
             node->token = token;
             return node;
         }
-        Error("Expression can be only number or identifier.", token);
+        Error("Expression can be only number or identifier or string.", token);
         return Expr_ptr();
     }
 

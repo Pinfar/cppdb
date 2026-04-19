@@ -2,6 +2,7 @@
 #include"../metadata/cell.h"
 #include <memory>
 #include"execution_plan.h"
+#include<stdexcept>
 
 namespace DBCPP_Operators
 {
@@ -33,7 +34,13 @@ namespace DBCPP_Operators
         private:
             ConditionDefinition definition;
             void SetIsMatch(){
-                IsMatchPtr = IsEqual<int>;
+                if(definition.dataType == ColumnType::Int)
+                    IsMatchPtr = IsEqual<int>;
+                else if(definition.dataType == ColumnType::String){
+                    IsMatchPtr = IsEqual<std::string>;
+                } else {
+                    throw std::domain_error("Invalid data type in comparision.");
+                }
             }
             bool (*IsMatchPtr)(DataRow*, ConditionDefinition);
         public:

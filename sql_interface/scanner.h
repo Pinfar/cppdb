@@ -16,7 +16,8 @@ namespace DBCPP::SqlInterface{
         Where,
         Number,
         Star,
-        Invalid
+        Invalid,
+        String
     };
 
     struct Token {
@@ -44,6 +45,8 @@ namespace DBCPP::SqlInterface{
             Token createToken(TokenType type);
             Token consumeIdentifier();
             Token consumeNumber();
+            Token consumeString();
+            void Error(std::string message);
         public:
             Scanner(std::string* source):m_source(source){}
             std::vector<Token> tokenizeSource();

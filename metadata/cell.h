@@ -44,6 +44,7 @@ struct Column
 struct TableDefinition{
     std::string name;
     std::vector<Column> columns;
+    int getColumnIdx(std::string columnName);
 };
 
 struct TableHeader

@@ -18,4 +18,9 @@ namespace DBCPP::SqlTest{
     {
         RunTest("select Column1,Column2 from Table1 where Column1=21","Column1;Column2\n21;G\n");
     }
+
+    TEST(SqlTest, SqlWithStringCondition) 
+    {
+        RunTest("select Column1,Column2 from Table1 where Column2='C'","Column1;Column2\n4;C\n");
+    }
 }

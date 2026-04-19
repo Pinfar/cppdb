@@ -41,6 +41,7 @@ target_sources(
   storage/dbmetadata.h
   storage/dbmetadata.cpp
   metadata/cell.h
+  metadata/cell.cpp
   utils/formatter.cpp
   utils/formatter.h
   utils/serialization.cpp

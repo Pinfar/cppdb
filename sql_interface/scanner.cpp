@@ -1,4 +1,6 @@
 #include "scanner.h"
+#include <stdexcept>
+
 namespace DBCPP::SqlInterface{
 
     static bool isAlpha(char current)
@@ -40,6 +42,8 @@ namespace DBCPP::SqlInterface{
                 return createToken(TokenType::Gt);
             case '*':
                 return createToken(TokenType::Star);
+            case '\'':
+                return consumeString();
             default:
                 if(isAlpha(current))
                 {
@@ -110,6 +114,23 @@ namespace DBCPP::SqlInterface{
     {
         while(isNumber(peek())) consume();
         return createToken(TokenType::Number);
+    }
+
+    Token Scanner::consumeString()
+    {
+        while(peek() != '\''){
+            char next = consume();
+            if(next == '\0'){
+                Error("Unterminated string!");
+            }         
+        }
+        consume(); //consume ending '
+        return createToken(TokenType::String);
+    }
+
+    void Scanner::Error(std::string message)
+    {
+        throw std::domain_error("Scanning error! "+message);
     }
 
     std::vector<Token> Scanner::tokenizeSource()

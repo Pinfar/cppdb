@@ -26,18 +26,33 @@ namespace DBCPP::QueryEngine {
     }
     DBCPP_Operators::PlanNode_ptr Compiler::CreateFilterNode(DBCPP::SqlInterface::SelectNode *node)
     {
+        using namespace DBCPP::SqlInterface;
         auto scan = CreateTableAccessNode(node);
         //TODO - fix
-        int columnIdx = 0;
-        int value = std::stoi(node->where->condition->rhs->token.GetTokenValue());
-        //end to do
+        int columnIdx = m_currentTableContext->getColumnIdx(node->where->condition->lhs->token.GetTokenValue());;
+        Token token = node->where->condition->rhs->token;
+        ConditionDefinition condition;
+        if(token.type == TokenType::Number){
+            int value = std::stoi(token.GetTokenValue());
+            condition = {ConditionType::Eq,ColumnType::Int, columnIdx, value, -1 };
+        }
+        else if(token.type == TokenType::String){
+            std::string value = token.GetTokenValue();
+            value = value.substr(1,value.length()-2);
+            condition = {ConditionType::Eq,ColumnType::String, columnIdx, value, -1 };
+        }
+        else {
+            Error("Unsupported filtering!");
+            return {};
+        }
         return std::unique_ptr<PlanNode>( new PlanNode{
             DbOperator::Filter,
-            {ConditionDefinition{ConditionType::Eq,ColumnType::Int, columnIdx, value, -1 }},
+            {condition},
             std::move(scan),
             {}
         });
     }
+
     DBCPP_Operators::PlanNode_ptr Compiler::CreateProjectionNode(DBCPP::SqlInterface::SelectNode *node)
     {
         auto where = CreateFilterNode(node);
@@ -45,14 +60,8 @@ namespace DBCPP::QueryEngine {
         auto& tableColumns = m_currentTableContext->columns;
         for(auto& column: node->columnList->columns)
         {
-            for(int i=0; i<tableColumns.size();i++)
-            {
-                if(tableColumns[i].name == column)
-                {
-                    columns.push_back(i);
-                    break;
-                }
-            }
+            int idx = m_currentTableContext->getColumnIdx(column);
+            columns.push_back(idx);
         }
         
         return std::unique_ptr<PlanNode>( new PlanNode{
