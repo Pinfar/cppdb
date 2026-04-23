@@ -23,4 +23,9 @@ namespace DBCPP::SqlTest{
     {
         RunTest("select Column1,Column2 from Table1 where Column2='C'","Column1;Column2\n4;C\n");
     }
+
+    TEST(SqlTest, SqlWithStringConditionReversed) 
+    {
+        RunTest("select Column1,Column2 from Table1 where 'C'=Column2","Column1;Column2\n4;C\n");
+    }
 }

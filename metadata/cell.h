@@ -6,7 +6,7 @@
 
 
 enum class ColumnType {
-    Int, String
+    Unknown, Int, String
 };
 
 struct DataCell{
@@ -45,6 +45,7 @@ struct TableDefinition{
     std::string name;
     std::vector<Column> columns;
     int getColumnIdx(std::string columnName);
+    ColumnType getColumnType(std::string columnName);
 };
 
 struct TableHeader

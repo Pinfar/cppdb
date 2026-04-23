@@ -1,6 +1,5 @@
 #include "compiler.h"
 #include "../operators/projection_operator.h"
-#include "../operators/expressions.h"
 #include <stdexcept>
 
 namespace DBCPP::QueryEngine {
@@ -25,20 +24,22 @@ namespace DBCPP::QueryEngine {
         using namespace DBCPP::SqlInterface;
         auto scan = CreateTableAccessNode(node);
         //TODO - fix
+        ColumnType lhsType = GetReturnedType(node->where->condition->lhs.get());
+        ColumnType rhsType = GetReturnedType(node->where->condition->rhs.get());
+        if(lhsType != rhsType) Error("Sides of comparision has different types");
+        auto type = lhsType;
+
         int columnIdx = m_currentTableContext->getColumnIdx(node->where->condition->lhs->token.GetTokenValue());;
         Token token = node->where->condition->rhs->token;
         ExprOper_ptr<bool> condition;
-        if(token.type == TokenType::Number){
-            ExprOper_ptr<int> lhs = std::make_unique<GetCellValueExpression<int>>(columnIdx);;
-            int value = std::stoi(token.GetTokenValue());
-            ExprOper_ptr<int> rhs = std::make_unique<ConstantExpression<int>>(value);
+        if(type == ColumnType::Int){
+            ExprOper_ptr<int> lhs = CreateIntExpressionOperator(node->where->condition->lhs.get());
+            ExprOper_ptr<int> rhs = CreateIntExpressionOperator(node->where->condition->rhs.get());
             condition = std::make_unique<EqualsExpression<int>>(lhs, rhs);
         }
-        else if(token.type == TokenType::String){
-            ExprOper_ptr<std::string> lhs = std::make_unique<GetCellValueExpression<std::string>>(columnIdx);
-            std::string value = token.GetTokenValue();
-            value = value.substr(1,value.length()-2);
-            ExprOper_ptr<std::string> rhs = std::make_unique<ConstantExpression<std::string>>(value);
+        else if(type == ColumnType::String){
+            ExprOper_ptr<std::string> lhs = CreateStringExpressionOperator(node->where->condition->lhs.get());
+            ExprOper_ptr<std::string> rhs = CreateStringExpressionOperator(node->where->condition->rhs.get());
             condition = std::make_unique<EqualsExpression<std::string>>(lhs, rhs);
         }
         else {
@@ -65,6 +66,56 @@ namespace DBCPP::QueryEngine {
             std::move(where),
             {}
         });
+    }
+
+    ColumnType Compiler::GetReturnedType(ExpressionNode *node)
+    {
+        switch(node->token.type){
+            case TokenType::Number: return ColumnType::Int;
+            case TokenType::String: return ColumnType::String;
+            case TokenType::Identifier: {
+                auto columnName = node->token.GetTokenValue();
+                return m_currentTableContext->getColumnType(columnName);
+            }
+            default:
+                Error("Invalid expression node!");
+                return ColumnType::Unknown; //unreachable
+        }
+    }
+
+    ExprOper_ptr<std::string> Compiler::CreateStringExpressionOperator(ExpressionNode *node)
+    {
+        switch(node->token.type){
+            case TokenType::String:{
+                auto value = node->token.GetTokenValue();
+                value = value.substr(1,value.length()-2);
+                return std::make_unique<ConstantExpression<std::string>>(value);
+            };
+            case TokenType::Identifier: {
+                int columnIdx = m_currentTableContext->getColumnIdx(node->token.GetTokenValue());
+                return std::make_unique<GetCellValueExpression<std::string>>(columnIdx);;
+            }
+            default:
+                Error("Invalid expression node!");
+                return {}; //unreachable
+        }
+    }
+
+    ExprOper_ptr<int> Compiler::CreateIntExpressionOperator(ExpressionNode *node)
+    {
+        switch(node->token.type){
+            case TokenType::Number:{
+                auto value = stoi(node->token.GetTokenValue());
+                return std::make_unique<ConstantExpression<int>>(value);
+            };
+            case TokenType::Identifier: {
+                int columnIdx = m_currentTableContext->getColumnIdx(node->token.GetTokenValue());
+                return std::make_unique<GetCellValueExpression<int>>(columnIdx);;
+            }
+            default:
+                Error("Invalid expression node!");
+                return {}; //unreachable
+        }
     }
 
     void Compiler::Error(std::string message)

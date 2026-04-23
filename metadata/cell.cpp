@@ -11,3 +11,15 @@ int TableDefinition::getColumnIdx(std::string columnName)
     }
     return -1;
 }
+
+ColumnType TableDefinition::getColumnType(std::string columnName)
+{
+    for(auto& column: columns)
+    {
+        if(column.name == columnName)
+        {
+            return column.type;
+        }
+    }
+    return ColumnType::Unknown;
+}

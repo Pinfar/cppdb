@@ -3,7 +3,6 @@
 #include"../operators/execution_plan.h"
 #include"storage.h"
 #include"../operators/abstract_iterator.h"
-#include"../operators/conditions.h"
 
 namespace DBCPP_Storage{
     using namespace DBCPP_Operators;

@@ -1,20 +1,26 @@
 #pragma once
 #include "../operators/execution_plan.h"
+#include "../operators/expressions.h"
 #include "../sql_interface/parser.h"
 #include "../storage/dbmetadata.h"
 
 namespace DBCPP::QueryEngine {
     using namespace DBCPP::Storage;
+    using namespace DBCPP::SqlInterface;
+    using namespace DBCPP_Operators;
     class Compiler{
         public:
             Compiler(DbMetadata metadata) : m_metadata(metadata) {}
-            DBCPP_Operators::ExecutionPlan PlanQuery(DBCPP::SqlInterface::SelectNode* node);
+            ExecutionPlan PlanQuery(SelectNode* node);
         private:
             DbMetadata m_metadata;
             TableDefinition* m_currentTableContext;
-            DBCPP_Operators::PlanNode_ptr CreateTableAccessNode(DBCPP::SqlInterface::SelectNode* node);
-            DBCPP_Operators::PlanNode_ptr CreateFilterNode(DBCPP::SqlInterface::SelectNode* node);
-            DBCPP_Operators::PlanNode_ptr CreateProjectionNode(DBCPP::SqlInterface::SelectNode* node);
+            PlanNode_ptr CreateTableAccessNode(SelectNode* node);
+            PlanNode_ptr CreateFilterNode(SelectNode* node);
+            PlanNode_ptr CreateProjectionNode(SelectNode* node);
+            ColumnType GetReturnedType(ExpressionNode* node);
+            ExprOper_ptr<std::string> CreateStringExpressionOperator(ExpressionNode* node);
+            ExprOper_ptr<int> CreateIntExpressionOperator(ExpressionNode* node);
             void Error(std::string message);
         
     };
