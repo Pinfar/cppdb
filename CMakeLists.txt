@@ -28,7 +28,6 @@ target_sources(
   tests/formatter_test.cpp
   tests/serialization_test.cpp
   tests/full_scan_test.cpp
-  tests/conditions_test.cpp
   tests/scanner_test.cpp
   tests/sql_test.cpp
   storage/storage.cpp
@@ -48,8 +47,6 @@ target_sources(
   operators/full_scan.cpp
   operators/full_scan.h
   operators/abstract_iterator.h
-  operators/conditions.cpp
-  operators/conditions.h
   operators/where_operator.cpp
   operators/where_operator.h
   operators/projection_operator.cpp
