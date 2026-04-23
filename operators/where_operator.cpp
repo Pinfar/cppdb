@@ -6,7 +6,7 @@ namespace DBCPP_Operators{
             bool hasAnyValue = innerOperator->Next();
             if(!hasAnyValue) return false;
             current = innerOperator->Current();
-            bool valueMatches = condition->IsMatch(current);
+            bool valueMatches = condition->Evaluate(current.get());
             if(valueMatches) return true;
         }
     }

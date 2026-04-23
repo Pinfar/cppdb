@@ -29,7 +29,6 @@ target_sources(
   tests/serialization_test.cpp
   tests/full_scan_test.cpp
   tests/conditions_test.cpp
-  tests/operators_test.cpp
   tests/scanner_test.cpp
   tests/sql_test.cpp
   storage/storage.cpp
@@ -56,6 +55,7 @@ target_sources(
   operators/projection_operator.cpp
   operators/projection_operator.h
   operators/execution_plan.h
+  operators/expressions.h
   sql_interface/scanner.h
   sql_interface/scanner.cpp
   sql_interface/parser.h

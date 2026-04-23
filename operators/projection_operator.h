@@ -5,9 +5,6 @@
 #include <memory>
 
 namespace DBCPP_Operators{
-    struct ProjectionDefinition{
-        std::vector<int> columns;
-    };
 
     class ProjectionOperator : public BaseDbOperator {
         private:

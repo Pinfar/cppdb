@@ -24,9 +24,7 @@ namespace DBCPP_Storage{
             }
             case DbOperator::Filter:
             {
-                auto definition = std::any_cast<ConditionDefinition>(node->parameters[0]);
-                auto condition = std::make_unique<ParametrizedCondition>(definition);
-                return std::make_unique<WhereOperator>(std::move(innerOperator), std::move(condition));
+                return std::make_unique<WhereOperator>(std::move(innerOperator), std::move(node->condition));
             }
             case DbOperator::Projection:
             {

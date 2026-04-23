@@ -1,5 +1,6 @@
 #include "compiler.h"
 #include "../operators/projection_operator.h"
+#include "../operators/expressions.h"
 #include <stdexcept>
 
 namespace DBCPP::QueryEngine {
@@ -17,12 +18,7 @@ namespace DBCPP::QueryEngine {
     DBCPP_Operators::PlanNode_ptr Compiler::CreateTableAccessNode(DBCPP::SqlInterface::SelectNode *node)
     {
         m_currentTableContext = m_metadata.GetTableDefinition(node->from->tableName);
-        return std::unique_ptr<PlanNode>( new PlanNode{
-            DbOperator::TableAccess,
-            { node->from->tableName },
-            {},
-            {}
-        });
+        return PlanNode::CreateTableAccess(node->from->tableName);
     }
     DBCPP_Operators::PlanNode_ptr Compiler::CreateFilterNode(DBCPP::SqlInterface::SelectNode *node)
     {
@@ -31,26 +27,25 @@ namespace DBCPP::QueryEngine {
         //TODO - fix
         int columnIdx = m_currentTableContext->getColumnIdx(node->where->condition->lhs->token.GetTokenValue());;
         Token token = node->where->condition->rhs->token;
-        ConditionDefinition condition;
+        ExprOper_ptr<bool> condition;
         if(token.type == TokenType::Number){
+            ExprOper_ptr<int> lhs = std::make_unique<GetCellValueExpression<int>>(columnIdx);;
             int value = std::stoi(token.GetTokenValue());
-            condition = {ConditionType::Eq,ColumnType::Int, columnIdx, value, -1 };
+            ExprOper_ptr<int> rhs = std::make_unique<ConstantExpression<int>>(value);
+            condition = std::make_unique<EqualsExpression<int>>(lhs, rhs);
         }
         else if(token.type == TokenType::String){
+            ExprOper_ptr<std::string> lhs = std::make_unique<GetCellValueExpression<std::string>>(columnIdx);
             std::string value = token.GetTokenValue();
             value = value.substr(1,value.length()-2);
-            condition = {ConditionType::Eq,ColumnType::String, columnIdx, value, -1 };
+            ExprOper_ptr<std::string> rhs = std::make_unique<ConstantExpression<std::string>>(value);
+            condition = std::make_unique<EqualsExpression<std::string>>(lhs, rhs);
         }
         else {
             Error("Unsupported filtering!");
             return {};
         }
-        return std::unique_ptr<PlanNode>( new PlanNode{
-            DbOperator::Filter,
-            {condition},
-            std::move(scan),
-            {}
-        });
+        return PlanNode::CreateFilter(scan, condition);
     }
 
     DBCPP_Operators::PlanNode_ptr Compiler::CreateProjectionNode(DBCPP::SqlInterface::SelectNode *node)
