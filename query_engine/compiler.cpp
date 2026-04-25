@@ -29,8 +29,6 @@ namespace DBCPP::QueryEngine {
         if(lhsType != rhsType) Error("Sides of comparision has different types");
         auto type = lhsType;
 
-        int columnIdx = m_currentTableContext->getColumnIdx(node->where->condition->lhs->token.GetTokenValue());;
-        Token token = node->where->condition->rhs->token;
         ExprOper_ptr<bool> condition;
         if(type == ColumnType::Int){
             ExprOper_ptr<int> lhs = CreateIntExpressionOperator(node->where->condition->lhs.get());
