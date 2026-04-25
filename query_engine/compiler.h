@@ -18,9 +18,7 @@ namespace DBCPP::QueryEngine {
             PlanNode_ptr CreateTableAccessNode(SelectNode* node);
             PlanNode_ptr CreateFilterNode(SelectNode* node);
             PlanNode_ptr CreateProjectionNode(SelectNode* node);
-            ColumnType GetReturnedType(ExpressionNode* node);
-            ExprOper_ptr CreateStringExpressionOperator(ExpressionNode* node);
-            ExprOper_ptr CreateIntExpressionOperator(ExpressionNode* node);
+            ExprOper_ptr CreateExpressionOperator(ExpressionNode* node);
             void Error(std::string message);
         
     };
