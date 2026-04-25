@@ -11,6 +11,7 @@
             "cwd": ".",
             "program": "/home/wilcz/projects/dbcpp/build/dbcpp_test",
             "MIMode": "gdb",
+            "args": ["--gtest_filter=SqlTest.SqlCanBeExecuted"],
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",

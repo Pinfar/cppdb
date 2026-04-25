@@ -2,18 +2,19 @@
 #include <vector>
 #include <string>
 #include <variant>
+#include <any>
 #include <memory>
 
 
 enum class ColumnType {
-    Unknown, Int, String
+    Unknown, Int, String, Boolean
 };
 
 struct DataCell{
     //this is not the most performant way of doing this, but I am still learning,
     //I read reddit post that says it is 70% slower than raw unions!
     //So it might be a hotspot in the future, we are going to see!
-    std::variant<std::string, int> value; 
+    std::any value; 
     ColumnType type;
     DataCell(std::string str){
         value = str;
@@ -22,6 +23,10 @@ struct DataCell{
     DataCell(int val){
         value = val;
         type = ColumnType::Int;
+    }
+    DataCell(bool val){
+        value = val;
+        type = ColumnType::Boolean;
     }
 };
 

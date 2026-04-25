@@ -42,9 +42,9 @@ std::string GetStringValue(DataCell& cell){
     switch (cell.type)
     {
     case ColumnType::String:
-        return std::get<std::string>(cell.value);
+        return std::any_cast<std::string>(cell.value);
     case ColumnType::Int:
-        return std::to_string(std::get<int>(cell.value));    
+        return std::to_string(std::any_cast<int>(cell.value));    
     default:
         return "";
     }

@@ -29,15 +29,15 @@ namespace DBCPP::QueryEngine {
         if(lhsType != rhsType) Error("Sides of comparision has different types");
         auto type = lhsType;
 
-        ExprOper_ptr<bool> condition;
+        ExprOper_ptr condition;
         if(type == ColumnType::Int){
-            ExprOper_ptr<int> lhs = CreateIntExpressionOperator(node->where->condition->lhs.get());
-            ExprOper_ptr<int> rhs = CreateIntExpressionOperator(node->where->condition->rhs.get());
+            ExprOper_ptr lhs = CreateIntExpressionOperator(node->where->condition->lhs.get());
+            ExprOper_ptr rhs = CreateIntExpressionOperator(node->where->condition->rhs.get());
             condition = std::make_unique<EqualsExpression<int>>(lhs, rhs);
         }
         else if(type == ColumnType::String){
-            ExprOper_ptr<std::string> lhs = CreateStringExpressionOperator(node->where->condition->lhs.get());
-            ExprOper_ptr<std::string> rhs = CreateStringExpressionOperator(node->where->condition->rhs.get());
+            ExprOper_ptr lhs = CreateStringExpressionOperator(node->where->condition->lhs.get());
+            ExprOper_ptr rhs = CreateStringExpressionOperator(node->where->condition->rhs.get());
             condition = std::make_unique<EqualsExpression<std::string>>(lhs, rhs);
         }
         else {
@@ -81,17 +81,17 @@ namespace DBCPP::QueryEngine {
         }
     }
 
-    ExprOper_ptr<std::string> Compiler::CreateStringExpressionOperator(ExpressionNode *node)
+    ExprOper_ptr Compiler::CreateStringExpressionOperator(ExpressionNode *node)
     {
         switch(node->token.type){
             case TokenType::String:{
                 auto value = node->token.GetTokenValue();
                 value = value.substr(1,value.length()-2);
-                return std::make_unique<ConstantExpression<std::string>>(value);
+                return std::make_unique<ConstantExpression>(value);
             };
             case TokenType::Identifier: {
                 int columnIdx = m_currentTableContext->getColumnIdx(node->token.GetTokenValue());
-                return std::make_unique<GetCellValueExpression<std::string>>(columnIdx);;
+                return std::make_unique<GetCellValueExpression>(columnIdx);;
             }
             default:
                 Error("Invalid expression node!");
@@ -99,16 +99,16 @@ namespace DBCPP::QueryEngine {
         }
     }
 
-    ExprOper_ptr<int> Compiler::CreateIntExpressionOperator(ExpressionNode *node)
+    ExprOper_ptr Compiler::CreateIntExpressionOperator(ExpressionNode *node)
     {
         switch(node->token.type){
             case TokenType::Number:{
                 auto value = stoi(node->token.GetTokenValue());
-                return std::make_unique<ConstantExpression<int>>(value);
+                return std::make_unique<ConstantExpression>(value);
             };
             case TokenType::Identifier: {
                 int columnIdx = m_currentTableContext->getColumnIdx(node->token.GetTokenValue());
-                return std::make_unique<GetCellValueExpression<int>>(columnIdx);;
+                return std::make_unique<GetCellValueExpression>(columnIdx);;
             }
             default:
                 Error("Invalid expression node!");

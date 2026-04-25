@@ -6,7 +6,8 @@ namespace DBCPP_Operators{
             bool hasAnyValue = innerOperator->Next();
             if(!hasAnyValue) return false;
             current = innerOperator->Current();
-            bool valueMatches = condition->Evaluate(current.get());
+            DataCell result = condition->Evaluate(current.get());
+            bool valueMatches = std::any_cast<bool>(result.value);
             if(valueMatches) return true;
         }
     }

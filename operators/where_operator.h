@@ -7,10 +7,10 @@
 namespace DBCPP_Operators{
     class WhereOperator  : public BaseDbOperator {
         private:
-            ExprOper_ptr<bool> condition;
+            ExprOper_ptr condition;
             std::unique_ptr<DataRow> current;
         public:
-            WhereOperator(std::unique_ptr<AbstractDbOperator> innerOperator, ExprOper_ptr<bool> condition ): 
+            WhereOperator(std::unique_ptr<AbstractDbOperator> innerOperator, ExprOper_ptr condition ): 
                 BaseDbOperator(std::move(innerOperator)), 
                 condition{std::move(condition)}
             {

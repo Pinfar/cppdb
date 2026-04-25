@@ -42,7 +42,7 @@ namespace DBCPP_Operators {
         std::vector<std::any> parameters;
         std::unique_ptr<PlanNode> lparent; //left parent is the main execution path
         std::unique_ptr<PlanNode> rparent; //right parent is reserved for joins,unions etc
-        ExprOper_ptr<bool> condition;
+        ExprOper_ptr condition;
 
 
         static std::unique_ptr<PlanNode> CreateTableAccess(std::string tableName){
@@ -54,7 +54,7 @@ namespace DBCPP_Operators {
             });
         }
 
-        static std::unique_ptr<PlanNode> CreateFilter(std::unique_ptr<PlanNode> &scan, ExprOper_ptr<bool> &condition){
+        static std::unique_ptr<PlanNode> CreateFilter(std::unique_ptr<PlanNode> &scan, ExprOper_ptr &condition){
             return std::unique_ptr<PlanNode>( new PlanNode{
                 DbOperator::Filter,
                 std::vector<std::any>{},
