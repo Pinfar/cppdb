@@ -28,4 +28,14 @@ namespace DBCPP::SqlTest{
     {
         RunTest("select Column1,Column2 from Table1 where 'C'=Column2","Column1;Column2\n4;C\n");
     }
+
+    TEST(SqlTest, SqlWithGreaterThan) 
+    {
+        RunTest("select Column1,Column2 from Table1 where Column1>22","Column1;Column2\n24;I\n");
+    }
+
+    TEST(SqlTest, SqlWithLessThan) 
+    {
+        RunTest("select Column1,Column2 from Table1 where Column1<2","Column1;Column2\n1;A\n");
+    }
 }

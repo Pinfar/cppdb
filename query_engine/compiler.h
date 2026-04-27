@@ -3,6 +3,7 @@
 #include "../operators/expressions.h"
 #include "../sql_interface/parser.h"
 #include "../storage/dbmetadata.h"
+#include <functional>
 
 namespace DBCPP::QueryEngine {
     using namespace DBCPP::Storage;
@@ -20,6 +21,10 @@ namespace DBCPP::QueryEngine {
             PlanNode_ptr CreateProjectionNode(SelectNode* node);
             ExprOper_ptr CreateExpressionOperator(ExpressionNode* node);
             void Error(std::string message);
+            template<typename T>
+            ExprOper_ptr CreateCondition(ExprOper_ptr& lhs, ExprOper_ptr& rhs, Token op);
+            template<typename T>
+            std::function<bool(T,T)> CreateOperator(Token op);
         
     };
 }

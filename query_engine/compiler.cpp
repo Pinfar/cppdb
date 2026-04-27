@@ -1,6 +1,7 @@
 #include "compiler.h"
 #include "../operators/projection_operator.h"
 #include <stdexcept>
+#include <functional>
 
 namespace DBCPP::QueryEngine {
     using namespace DBCPP_Operators;
@@ -31,11 +32,12 @@ namespace DBCPP::QueryEngine {
         auto type = lhs->GetType();
 
         ExprOper_ptr condition;
+
         if(type == ColumnType::Int){
-            condition = std::make_unique<EqualsExpression<int>>(lhs, rhs);
+            condition = CreateCondition<int>(lhs, rhs, node->where->condition->oper);
         }
         else if(type == ColumnType::String){
-            condition = std::make_unique<EqualsExpression<std::string>>(lhs, rhs);
+            condition = CreateCondition<std::string>(lhs, rhs, node->where->condition->oper);
         }
         else {
             Error("Unsupported filtering!");
@@ -84,6 +86,27 @@ namespace DBCPP::QueryEngine {
             default:
                 Error("Invalid expression node!");
                 return {}; //unreachable
+        }
+    }
+    
+    template<typename T>
+    ExprOper_ptr Compiler::CreateCondition(ExprOper_ptr& lhs, ExprOper_ptr& rhs, Token op)
+    {
+        auto opFunc = CreateOperator<T>(op);
+        return std::make_unique<EqualsExpression<T>>(lhs, rhs, opFunc);
+    }
+
+    template <typename T>
+    std::function<bool(T, T)> Compiler::CreateOperator(Token op)
+    {
+        switch (op.type)
+        {
+        case TokenType::Eq: return std::equal_to<T>();
+        case TokenType::Neq: return std::not_equal_to<T>();
+        case TokenType::Gt: return std::greater<T>();
+        case TokenType::Lt: return std::less<T>();
+        default:
+            throw std::domain_error("Unsupported operator!");
         }
     }
 

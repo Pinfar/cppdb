@@ -45,8 +45,11 @@ namespace DBCPP_Operators {
         private:
             ExprOper_ptr m_lhs;
             ExprOper_ptr m_rhs;
+            std::function<bool(T,T)> m_comparisonFunction;
         public:
-            EqualsExpression(ExprOper_ptr& lhs, ExprOper_ptr& rhs) : Expression(ColumnType::Boolean), m_lhs(std::move(lhs)), m_rhs(std::move(rhs)) {}
+            EqualsExpression(ExprOper_ptr& lhs, ExprOper_ptr& rhs, std::function<bool(T,T)> comparisonFunction) 
+                : Expression(ColumnType::Boolean), m_lhs(std::move(lhs)), 
+                    m_rhs(std::move(rhs)), m_comparisonFunction(comparisonFunction) {}
             virtual DataCell Evaluate(DataRow* row); 
     };
 
@@ -55,6 +58,6 @@ namespace DBCPP_Operators {
     {
         T lhs = std::any_cast<T>(m_lhs->Evaluate(row).value);
         T rhs = std::any_cast<T>(m_rhs->Evaluate(row).value);
-        return DataCell(std::equal_to<T>()(lhs, rhs));
+        return DataCell(m_comparisonFunction(lhs, rhs));
     }
 }
