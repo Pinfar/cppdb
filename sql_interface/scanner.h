@@ -17,7 +17,9 @@ namespace DBCPP::SqlInterface{
         Number,
         Star,
         Invalid,
-        String
+        String,
+        And,
+        Or
     };
 
     struct Token {

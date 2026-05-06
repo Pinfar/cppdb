@@ -19,7 +19,7 @@ namespace DBCPP::QueryEngine {
             PlanNode_ptr CreateTableAccessNode(SelectNode* node);
             PlanNode_ptr CreateFilterNode(SelectNode* node);
             PlanNode_ptr CreateProjectionNode(SelectNode* node);
-            ExprOper_ptr CreateExpressionOperator(ExpressionNode* node);
+            ExprOper_ptr CreateExpressionOperator(AnyExpression* nodeExpr);
             void Error(std::string message);
             template<typename T>
             ExprOper_ptr CreateCondition(ExprOper_ptr& lhs, ExprOper_ptr& rhs, Token op);

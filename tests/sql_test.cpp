@@ -38,4 +38,9 @@ namespace DBCPP::SqlTest{
     {
         RunTest("select Column1,Column2 from Table1 where Column1<2","Column1;Column2\n1;A\n");
     }
+
+    TEST(SqlTest, SqlWithAnd) 
+    {
+        RunTest("select Column1,Column2 from Table1 where Column1>21 and Column1<24","Column1;Column2\n22;H\n");
+    }
 }

@@ -1,5 +1,6 @@
 #include "../sql_interface/scanner.h"
 #include "../sql_interface/parser.h"
+#include <variant>
 #include <gtest/gtest.h>
 
 namespace DBCPP::SqlInterface
@@ -175,9 +176,12 @@ namespace DBCPP::SqlInterface
         ASSERT_TRUE(select);
         ASSERT_TRUE(select->where);
         ASSERT_TRUE(select->where->condition);
-        EXPECT_EQ(select->where->condition->lhs->token.GetTokenValue(), "a");
-        EXPECT_EQ(select->where->condition->oper.type, TokenType::Eq);
-        EXPECT_EQ(select->where->condition->rhs->token.GetTokenValue(), "1");
+        auto& condition = std::get<BinaryExpression>(*select->where->condition);
+        auto& lhs = std::get<LiteralExpression>(*condition.lhs);
+        auto& rhs = std::get<LiteralExpression>(*condition.rhs);
+        EXPECT_EQ(lhs.token.GetTokenValue(), "a");
+        EXPECT_EQ(condition.oper.type, TokenType::Eq);
+        EXPECT_EQ(rhs.token.GetTokenValue(), "1");
     }
 
 

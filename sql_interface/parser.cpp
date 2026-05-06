@@ -81,22 +81,21 @@ namespace DBCPP::SqlInterface
         return node;
     }
 
-    ConditionNode_ptr Parser::Condition()
+    Expr_ptr Parser::Condition()
     {
-        auto node = std::make_unique<ConditionNode>();
-        node->lhs = Expression();
-        node->oper = Advance(); //This is not correct -> token that is not an operator should not be consumed here.
-        node->rhs = Expression();
+        auto node = std::make_unique<AnyExpression>(BinaryExpression{
+            Expression(),
+            Advance(), //This is not correct -> token that is not an operator should not be consumed here.
+            Expression()
+        });
         return node;
     }
 
     Expr_ptr Parser::Expression()
     {
-        auto node = std::make_unique<ExpressionNode>();
         Token token = Advance();
         if(token.type == TokenType::Number || token.type == TokenType::Identifier || token.type == TokenType::String){
-            node->token = token;
-            return node;
+            return std::make_unique<AnyExpression>(LiteralExpression{token});
         }
         Error("Expression can be only number or identifier or string.", token);
         return Expr_ptr();

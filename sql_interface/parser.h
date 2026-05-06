@@ -3,25 +3,37 @@
 #include <vector>
 #include <memory>
 #include <optional>
+#include <variant>
 
 namespace DBCPP::SqlInterface{
-    
-    struct ExpressionNode {
+    struct LiteralExpression;
+    struct BinaryExpression;
+    struct LogicalExpression;
+    using AnyExpression = std::variant<LiteralExpression, BinaryExpression, LogicalExpression>;
+    using Expr_ptr = std::unique_ptr<AnyExpression>;
+
+    struct LiteralExpression {
         Token token;
     };
-    using Expr_ptr = std::unique_ptr<ExpressionNode>;
 
-    struct ConditionNode {
+    struct BinaryExpression {
         Expr_ptr lhs;
         Token oper;
         Expr_ptr rhs;
     };
-    using ConditionNode_ptr = std::unique_ptr<ConditionNode>;
+
+    struct LogicalExpression{
+        Expr_ptr lhs;
+        Token oper;
+        Expr_ptr rhs;
+    };
+
+    
 
     //Node defitinitions
     struct WhereNode
     {
-        ConditionNode_ptr condition;
+        Expr_ptr condition;
     };
 
     using Where_ptr = std::unique_ptr<WhereNode>;
@@ -68,7 +80,7 @@ namespace DBCPP::SqlInterface{
         From_ptr From();
         Where_ptr Where();
         SelectColumnList_ptr ColumnList();
-        ConditionNode_ptr Condition();
+        Expr_ptr Condition();
         Expr_ptr Expression();
 
         public:

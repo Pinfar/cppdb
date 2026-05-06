@@ -106,6 +106,10 @@ namespace DBCPP::SqlInterface{
             type = TokenType::From;
         } else if (value == "where") {
             type = TokenType::Where;
+        } else if (value == "or") {
+            type = TokenType::Or;
+        } else if (value == "and") {
+            type = TokenType::And;
         }
         return createToken(type);
     }

@@ -26,18 +26,19 @@ namespace DBCPP::QueryEngine {
         auto scan = CreateTableAccessNode(node);
         //TODO - fix
         
-        ExprOper_ptr lhs = CreateExpressionOperator(node->where->condition->lhs.get());
-        ExprOper_ptr rhs = CreateExpressionOperator(node->where->condition->rhs.get());
+        auto& conditionExpr = std::get<BinaryExpression>(*node->where->condition);
+        ExprOper_ptr lhs = CreateExpressionOperator(conditionExpr.lhs.get());
+        ExprOper_ptr rhs = CreateExpressionOperator(conditionExpr.rhs.get());
         if(lhs->GetType() != rhs->GetType()) Error("Sides of comparision has different types");
         auto type = lhs->GetType();
 
         ExprOper_ptr condition;
 
         if(type == ColumnType::Int){
-            condition = CreateCondition<int>(lhs, rhs, node->where->condition->oper);
+            condition = CreateCondition<int>(lhs, rhs, conditionExpr.oper);
         }
         else if(type == ColumnType::String){
-            condition = CreateCondition<std::string>(lhs, rhs, node->where->condition->oper);
+            condition = CreateCondition<std::string>(lhs, rhs, conditionExpr.oper);
         }
         else {
             Error("Unsupported filtering!");
@@ -65,20 +66,21 @@ namespace DBCPP::QueryEngine {
         });
     }
 
-    ExprOper_ptr Compiler::CreateExpressionOperator(ExpressionNode *node)
+    ExprOper_ptr Compiler::CreateExpressionOperator(AnyExpression *nodeExpr)
     {
-        switch(node->token.type){
+        auto& node = std::get<LiteralExpression>(*nodeExpr);
+        switch(node.token.type){
             case TokenType::String:{
-                auto value = node->token.GetTokenValue();
+                auto value = node.token.GetTokenValue();
                 value = value.substr(1,value.length()-2);
                 return std::make_unique<ConstantExpression>(value);
             }
             case TokenType::Number:{
-                auto value = stoi(node->token.GetTokenValue());
+                auto value = stoi(node.token.GetTokenValue());
                 return std::make_unique<ConstantExpression>(value);
             };
             case TokenType::Identifier: {
-                auto columnName = node->token.GetTokenValue();
+                auto columnName = node.token.GetTokenValue();
                 auto type = m_currentTableContext->getColumnType(columnName);
                 int columnIdx = m_currentTableContext->getColumnIdx(columnName);
                 return std::make_unique<GetCellValueExpression>(columnIdx, type);;
