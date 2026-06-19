@@ -43,4 +43,9 @@ namespace DBCPP::SqlTest{
     {
         RunTest("select Column1,Column2 from Table1 where Column1>21 and Column1<24","Column1;Column2\n22;H\n");
     }
+
+    TEST(SqlTest, SqlWithOr) 
+    {
+        RunTest("select Column1,Column2 from Table1 where Column1>21 and Column1<24 or Column1=1","Column1;Column2\n1;A\n22;H\n");
+    }
 }

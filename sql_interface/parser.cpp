@@ -58,7 +58,7 @@ namespace DBCPP::SqlInterface
     {
         auto node = std::make_unique<WhereNode>();
         Consume(TokenType::Where);
-        node->condition = Condition();
+        node->condition = MakeOrExpression();
         return node;
     }
 
@@ -81,17 +81,47 @@ namespace DBCPP::SqlInterface
         return node;
     }
 
-    Expr_ptr Parser::Condition()
+    Expr_ptr Parser::MakeOrExpression()
     {
-        auto node = std::make_unique<AnyExpression>(BinaryExpression{
-            Expression(),
-            Advance(), //This is not correct -> token that is not an operator should not be consumed here.
-            Expression()
+        auto node = MakeAndExpression();
+        if(Peek().type != TokenType::Or) return node;
+        node = std::make_unique<AnyExpression>(LogicalExpression{
+            std::move(node),
+            Advance(),
+            MakeOrExpression()
         });
         return node;
     }
 
-    Expr_ptr Parser::Expression()
+    Expr_ptr Parser::MakeAndExpression()
+    {
+        auto node = MakeEqNeqExpression();
+        if(Peek().type != TokenType::And) return node;
+        node = std::make_unique<AnyExpression>(LogicalExpression{
+            std::move(node),
+            Advance(),
+            MakeAndExpression()
+        });
+        return node;
+    }
+
+    Expr_ptr Parser::MakeEqNeqExpression()
+    {
+        auto node = MakeLiteralExpression();
+        if(Peek().type != TokenType::Eq 
+            && Peek().type != TokenType::Neq
+            && Peek().type != TokenType::Gt
+            && Peek().type != TokenType::Lt
+        ) return node;
+        node = std::make_unique<AnyExpression>(BinaryExpression{
+            std::move(node),
+            Advance(),
+            MakeLiteralExpression()
+        });
+        return node;
+    }
+
+    Expr_ptr Parser::MakeLiteralExpression()
     {
         Token token = Advance();
         if(token.type == TokenType::Number || token.type == TokenType::Identifier || token.type == TokenType::String){

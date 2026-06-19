@@ -80,8 +80,10 @@ namespace DBCPP::SqlInterface{
         From_ptr From();
         Where_ptr Where();
         SelectColumnList_ptr ColumnList();
-        Expr_ptr Condition();
-        Expr_ptr Expression();
+        Expr_ptr MakeOrExpression();
+        Expr_ptr MakeAndExpression();
+        Expr_ptr MakeEqNeqExpression();
+        Expr_ptr MakeLiteralExpression();
 
         public:
             Parser(std::vector<Token> &tokens): m_tokens(std::move(tokens)){
