@@ -1,12 +1,14 @@
+#include <any>
 #include <iostream>
-#include <vector>
 #include <string>
 #include <variant>
-#include <any>
+#include <vector>
 
-struct A{
-    ~A(){
-        std::cout<<"Destroyed!"<<std::endl;
+struct A
+{
+    ~A()
+    {
+        std::cout << "Destroyed!" << std::endl;
     }
 };
 
