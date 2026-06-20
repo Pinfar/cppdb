@@ -35,7 +35,7 @@ namespace FullScanTestsNS
         EXPECT_EQ(engine->getDatabaseHeaderPage().tables.size(), 1);
     }
 
-    void NextElementIs(DBCPP_Operators::FullScanOperator& scan, std::string expectedValue){
+    void NextElementIs(DBCPP_Operators::FullScanOperator& scan, const std::string& expectedValue){
         ASSERT_TRUE(scan.Next());
         auto current = scan.Current();
         auto row = GetSerializedRow(current);

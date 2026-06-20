@@ -1,6 +1,5 @@
 #pragma once
 #include "../metadata/cell.h"
-#include<variant>
 #include<memory>
 #include<functional>
 
@@ -24,7 +23,7 @@ namespace DBCPP_Operators {
             DataCell m_constant;
         public:
             ConstantExpression(DataCell constant) : Expression(constant.type), m_constant(constant) {}
-            virtual DataCell Evaluate(DataRow* row)
+            DataCell Evaluate(DataRow* row) override
             {
                 return m_constant;
             } 
@@ -35,7 +34,7 @@ namespace DBCPP_Operators {
             int m_index;
         public:
             GetCellValueExpression(int index, ColumnType type) : Expression(type), m_index(index) {}
-            virtual DataCell Evaluate(DataRow* row){
+            DataCell Evaluate(DataRow* row) override{
                 return row->cells[m_index];
             }
     };
@@ -50,7 +49,7 @@ namespace DBCPP_Operators {
             EqualsExpression(ExprOper_ptr& lhs, ExprOper_ptr& rhs, std::function<bool(T,T)> comparisonFunction) 
                 : Expression(ColumnType::Boolean), m_lhs(std::move(lhs)), 
                     m_rhs(std::move(rhs)), m_comparisonFunction(comparisonFunction) {}
-            virtual DataCell Evaluate(DataRow* row); 
+             DataCell Evaluate(DataRow* row) override; 
     };
 
     template <typename T>

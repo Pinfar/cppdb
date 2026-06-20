@@ -2,7 +2,7 @@
 #include "../utils/test_dbengine.h"
 
 namespace DBCPP::SqlTest{
-    static void RunTest(std::string sql, std::string expectedOutput)
+    static void RunTest(std::string sql, const std::string& expectedOutput)
     {
         DBCPP::Utils::TestDbEngine engine;
         std::string result = engine.RunSql(sql);

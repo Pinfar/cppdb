@@ -32,7 +32,6 @@ namespace DBCPP::QueryEngine {
     {
         auto where = CreateFilterNode(node);
         std::vector<int> columns;
-        auto& tableColumns = m_currentTableContext->columns;
         for(auto& column: node->columnList->columns)
         {
             int idx = m_currentTableContext->getColumnIdx(column);
