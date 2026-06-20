@@ -66,5 +66,19 @@
         "thread": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp"
-    }
+    },
+    "[cpp]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools",
+        "editor.formatOnSave": true
+    },
+    "testMate.cpp.test.advancedExecutables": [
+        {
+            "pattern": "build/**/dbcpp_test",
+            "runTask": {
+                "before": [
+                    "CMake: Build Test Target"
+                ]
+            }
+        }
+    ]
 }
