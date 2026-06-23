@@ -61,4 +61,11 @@ TEST(SqlTest, SqlWithPlus)
 {
     RunTest("select Column1,Column2 from Table1 where Column1+1=2", "Column1;Column2\n1;A\n");
 }
+
+TEST(SqlTest, SqlWithFunnyMath)
+{
+    // Order of math operations is still not preserved - needs to be updated later
+    RunTest("select Column1,Column2 from Table1 where Column1+1+2-2*2/2=2", "Column1;Column2\n1;A\n");
+}
+
 } // namespace DBCPP::SqlTest
