@@ -76,78 +76,22 @@ ExprOper_ptr Compiler::operator()(BinaryExpression &exp)
 {
     ExprOper_ptr lhs = CreateExpressionOperator(exp.lhs.get());
     ExprOper_ptr rhs = CreateExpressionOperator(exp.rhs.get());
-    if (lhs->GetType() != rhs->GetType())
-        Error("Sides of comparision has different types");
-    auto type = lhs->GetType();
 
-    ExprOper_ptr binaryExpressionOperator;
-
-    if (type == ColumnType::Int)
-    {
-        binaryExpressionOperator = CreateCondition<int>(lhs, rhs, exp.oper);
-    }
-    else if (type == ColumnType::String)
-    {
-        binaryExpressionOperator = CreateCondition<std::string>(lhs, rhs, exp.oper);
-    }
-    else
-    {
-        Error("Unsupported type!");
-        return {};
-    }
-    return binaryExpressionOperator;
+    return CreateBinary(lhs, rhs, exp.oper);
 }
 
 ExprOper_ptr Compiler::operator()(LogicalExpression &exp)
 {
     ExprOper_ptr lhs = CreateExpressionOperator(exp.lhs.get());
     ExprOper_ptr rhs = CreateExpressionOperator(exp.rhs.get());
-    if (lhs->GetType() != ColumnType::Boolean || rhs->GetType() != ColumnType::Boolean)
-        Error("Sides of comparision has different types");
 
-    return CreateLogical(lhs, rhs, exp.oper);
+    return CreateBinary(lhs, rhs, exp.oper);
 }
 
-template <typename T> ExprOper_ptr Compiler::CreateCondition(ExprOper_ptr &lhs, ExprOper_ptr &rhs, Token op)
+auto Compiler::CreateBinary(ExprOper_ptr &lhs, ExprOper_ptr &rhs, Token op) -> ExprOper_ptr
 {
-    auto opFunc = CreateOperator<T>(op);
-    return std::make_unique<EqualsExpression<T>>(lhs, rhs, opFunc);
-}
-
-template <typename T> std::function<bool(T, T)> Compiler::CreateOperator(Token op)
-{
-    switch (op.type)
-    {
-    case TokenType::Eq:
-        return std::equal_to<T>();
-    case TokenType::Neq:
-        return std::not_equal_to<T>();
-    case TokenType::Gt:
-        return std::greater<T>();
-    case TokenType::Lt:
-        return std::less<T>();
-    default:
-        throw std::domain_error("Unsupported operator!");
-    }
-}
-
-ExprOper_ptr Compiler::CreateLogical(ExprOper_ptr &lhs, ExprOper_ptr &rhs, Token op)
-{
-    auto opFunc = CreateLogicalOperator(op);
-    return std::make_unique<EqualsExpression<bool>>(lhs, rhs, opFunc);
-}
-
-std::function<bool(bool, bool)> Compiler::CreateLogicalOperator(Token op)
-{
-    switch (op.type)
-    {
-    case TokenType::And:
-        return std::logical_and();
-    case TokenType::Or:
-        return std::logical_or();
-    default:
-        throw std::domain_error("Unsupported operator!");
-    }
+    auto opFunc = m_typeResolver.ResolveBinaryOperator({lhs->GetType(), rhs->GetType(), op.type});
+    return std::make_unique<BinaryExpressionOperator>(lhs, rhs, opFunc.func, opFunc.returnType);
 }
 
 void Compiler::Error(std::string message)

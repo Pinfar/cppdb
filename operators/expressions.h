@@ -1,5 +1,6 @@
 #pragma once
 #include "../metadata/cell.h"
+#include "../types/type_interface.h"
 #include <functional>
 #include <memory>
 
@@ -75,4 +76,25 @@ template <typename T> inline DataCell EqualsExpression<T>::Evaluate(DataRow *row
     T rhs = std::any_cast<T>(m_rhs->Evaluate(row).value);
     return DataCell(m_comparisonFunction(lhs, rhs));
 }
+
+class BinaryExpressionOperator : public Expression
+{
+  private:
+    ExprOper_ptr m_lhs;
+    ExprOper_ptr m_rhs;
+    DBCPP::Types::BinaryTypeOperator m_opFunction;
+
+  public:
+    BinaryExpressionOperator(ExprOper_ptr &lhs, ExprOper_ptr &rhs, DBCPP::Types::BinaryTypeOperator opFunction,
+                             ColumnType type)
+        : Expression(type), m_lhs(std::move(lhs)), m_rhs(std::move(rhs)), m_opFunction(opFunction)
+    {
+    }
+    auto Evaluate(DataRow *row) -> DataCell override
+    {
+        auto lhs = m_lhs->Evaluate(row);
+        auto rhs = m_rhs->Evaluate(row);
+        return m_opFunction(lhs, rhs);
+    }
+};
 } // namespace DBCPP_Operators

@@ -58,6 +58,10 @@ target_sources(db_engine
     query_engine/compiler.cpp
     utils/test_dbengine.h
     utils/test_dbengine.cpp
+    types/type_interface.h
+    types/type_interface.cpp
+    types/type_base.h
+    types/type_base.cpp
 )
 
 # Definiujemy, gdzie kompilator ma szukać plików nagłówkowych.
