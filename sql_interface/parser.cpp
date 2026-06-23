@@ -66,7 +66,6 @@ Where_ptr Parser::Where()
 SelectColumnList_ptr Parser::ColumnList()
 {
     auto node = std::make_unique<SelectColumnList>();
-    bool firstColumn = true;
     while (true)
     {
         Token column = Consume(TokenType::Identifier);
@@ -93,21 +92,42 @@ Expr_ptr Parser::MakeOrExpression()
 
 Expr_ptr Parser::MakeAndExpression()
 {
-    auto node = MakeEqNeqExpression();
+    auto node = MakeBinaryExpression();
     if (Peek().type != TokenType::And)
         return node;
     node = std::make_unique<AnyExpression>(LogicalExpression{std::move(node), Advance(), MakeAndExpression()});
     return node;
 }
 
-Expr_ptr Parser::MakeEqNeqExpression()
+Expr_ptr Parser::MakeBinaryExpression()
+{
+    auto node = MakeArithmeticExpression();
+    switch (Peek().type)
+    {
+    case TokenType::Eq:
+    case TokenType::Neq:
+    case TokenType::Gt:
+    case TokenType::Lt:
+        return std::make_unique<AnyExpression>(BinaryExpression{std::move(node), Advance(), MakeArithmeticExpression()});
+    default:
+        return node;
+    }
+}
+
+Expr_ptr Parser::MakeArithmeticExpression()
 {
     auto node = MakeLiteralExpression();
-    if (Peek().type != TokenType::Eq && Peek().type != TokenType::Neq && Peek().type != TokenType::Gt &&
-        Peek().type != TokenType::Lt)
+    switch (Peek().type)
+    {
+    case TokenType::Plus:
+    case TokenType::Minus:
+    case TokenType::Star:
+    case TokenType::Slash:
+        return std::make_unique<AnyExpression>(
+            BinaryExpression{std::move(node), Advance(), MakeArithmeticExpression()});
+    default:
         return node;
-    node = std::make_unique<AnyExpression>(BinaryExpression{std::move(node), Advance(), MakeLiteralExpression()});
-    return node;
+    }
 }
 
 Expr_ptr Parser::MakeLiteralExpression()

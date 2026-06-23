@@ -1,5 +1,4 @@
 #include "compiler.h"
-#include "../operators/projection_operator.h"
 #include <functional>
 #include <stdexcept>
 

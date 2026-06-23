@@ -42,6 +42,12 @@ Token Scanner::nextToken()
         return createToken(TokenType::Gt);
     case '*':
         return createToken(TokenType::Star);
+    case '+':
+        return createToken(TokenType::Plus);
+    case '-':
+        return createToken(TokenType::Minus);
+    case '/':
+        return createToken(TokenType::Slash);
     case '\'':
         return consumeString();
     default:

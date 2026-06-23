@@ -85,8 +85,9 @@ class Parser
     SelectColumnList_ptr ColumnList();
     Expr_ptr MakeOrExpression();
     Expr_ptr MakeAndExpression();
-    Expr_ptr MakeEqNeqExpression();
+    Expr_ptr MakeBinaryExpression();
     Expr_ptr MakeLiteralExpression();
+    Expr_ptr MakeArithmeticExpression();
 
   public:
     Parser(std::vector<Token> &tokens) : m_tokens(std::move(tokens))

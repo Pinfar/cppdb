@@ -21,7 +21,10 @@ enum class TokenType
     Invalid,
     String,
     And,
-    Or
+    Or,
+    Plus,
+    Minus,
+    Slash
 };
 
 struct Token
