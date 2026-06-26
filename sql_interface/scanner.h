@@ -36,7 +36,7 @@ struct Token
     int line;
     int position;
 
-    std::string GetTokenValue();
+    std::string GetTokenValue() const;
 };
 
 class Scanner

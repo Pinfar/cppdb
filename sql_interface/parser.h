@@ -2,6 +2,7 @@
 #include "scanner.h"
 #include <memory>
 #include <optional>
+#include <string>
 #include <variant>
 #include <vector>
 
@@ -50,6 +51,7 @@ using From_ptr = std::unique_ptr<FromNode>;
 struct SelectColumnList
 {
     std::vector<Expr_ptr> columns;
+    std::vector<std::string> names;
 };
 
 using SelectColumnList_ptr = std::unique_ptr<SelectColumnList>;

@@ -69,6 +69,14 @@ SelectColumnList_ptr Parser::ColumnList()
     while (true)
     {
         auto name = MakeExpression();
+        if (const auto *literal = std::get_if<LiteralExpression>(name.get()))
+        {
+            node->names.push_back(literal->token.GetTokenValue());
+        }
+        else
+        {
+            node->names.emplace_back("Unknown");
+        }
         node->columns.push_back(std::move(name));
 
         if (Peek().type == TokenType::From)

@@ -170,7 +170,7 @@ std::vector<Token> Scanner::tokenizeSource()
     return result;
 }
 
-std::string Token::GetTokenValue()
+std::string Token::GetTokenValue() const
 {
     return source->substr(beginOffset, length);
 }

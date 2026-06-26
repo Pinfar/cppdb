@@ -16,8 +16,7 @@ ExecutionPlan Compiler::PlanQuery(DBCPP::SqlInterface::SelectNode *node)
 {
     auto projectionOperator = CreateProjectionNode(node);
 
-    std::vector<std::string> labels{"Col1", "Col2"};
-    ExecutionPlan executionPlan{std::move(projectionOperator), std::move(labels)};
+    ExecutionPlan executionPlan{std::move(projectionOperator), std::move(node->columnList->names)};
 
     return executionPlan;
 }
