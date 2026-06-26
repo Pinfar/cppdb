@@ -31,8 +31,6 @@ target_sources(db_engine
     storage/storage.h
     storage/dbwriter.cpp
     storage/dbwriter.h
-    storage/dbreader.cpp
-    storage/dbreader.h
     storage/dbmetadata.h
     storage/dbmetadata.cpp
     metadata/cell.h
@@ -48,8 +46,8 @@ target_sources(db_engine
     operators/where_operator.h
     operators/projection_operator.cpp
     operators/projection_operator.h
-    operators/execution_plan.h
     operators/expressions.h
+    operators/execution_plan_base.h
     sql_interface/scanner.h
     sql_interface/scanner.cpp
     sql_interface/parser.h

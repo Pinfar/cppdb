@@ -1,9 +1,9 @@
 #pragma once
-#include "../operators/execution_plan.h"
 #include "../operators/expressions.h"
 #include "../sql_interface/parser.h"
 #include "../storage/dbmetadata.h"
 #include "../types/type_interface.h"
+#include "operators/execution_plan_base.h"
 #include <functional>
 
 namespace DBCPP::QueryEngine
@@ -28,9 +28,9 @@ class Compiler
     TableDefinition *m_currentTableContext;
     Types::TypeResolver m_typeResolver;
 
-    PlanNode_ptr CreateTableAccessNode(SelectNode *node);
-    PlanNode_ptr CreateFilterNode(SelectNode *node);
-    PlanNode_ptr CreateProjectionNode(SelectNode *node);
+    ExecutionPlanNode_ptr CreateTableAccessNode(SelectNode *node);
+    ExecutionPlanNode_ptr CreateFilterNode(SelectNode *node);
+    ExecutionPlanNode_ptr CreateProjectionNode(SelectNode *node);
     ExprOper_ptr CreateExpressionOperator(AnyExpression *nodeExpr);
     ExprOper_ptr CreateBinary(ExprOper_ptr &lhs, ExprOper_ptr &rhs, Token op);
     void Error(std::string message);

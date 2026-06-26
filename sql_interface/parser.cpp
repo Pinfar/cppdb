@@ -59,7 +59,7 @@ Where_ptr Parser::Where()
 {
     auto node = std::make_unique<WhereNode>();
     Consume(TokenType::Where);
-    node->condition = MakeOrExpression();
+    node->condition = MakeExpression();
     return node;
 }
 
@@ -68,8 +68,7 @@ SelectColumnList_ptr Parser::ColumnList()
     auto node = std::make_unique<SelectColumnList>();
     while (true)
     {
-        Token column = Consume(TokenType::Identifier);
-        auto name = GetTokenValue(column);
+        auto name = MakeExpression();
         node->columns.push_back(std::move(name));
 
         if (Peek().type == TokenType::From)
@@ -81,12 +80,12 @@ SelectColumnList_ptr Parser::ColumnList()
     return node;
 }
 
-Expr_ptr Parser::MakeOrExpression()
+Expr_ptr Parser::MakeExpression()
 {
     auto node = MakeAndExpression();
     if (Peek().type != TokenType::Or)
         return node;
-    node = std::make_unique<AnyExpression>(LogicalExpression{std::move(node), Advance(), MakeOrExpression()});
+    node = std::make_unique<AnyExpression>(LogicalExpression{std::move(node), Advance(), MakeExpression()});
     return node;
 }
 
@@ -108,7 +107,8 @@ Expr_ptr Parser::MakeBinaryExpression()
     case TokenType::Neq:
     case TokenType::Gt:
     case TokenType::Lt:
-        return std::make_unique<AnyExpression>(BinaryExpression{std::move(node), Advance(), MakeArithmeticExpression()});
+        return std::make_unique<AnyExpression>(
+            BinaryExpression{std::move(node), Advance(), MakeArithmeticExpression()});
     default:
         return node;
     }

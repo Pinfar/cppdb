@@ -1,5 +1,7 @@
 #include "projection_operator.h"
 
+#include <memory>
+
 namespace DBCPP_Operators
 {
 bool ProjectionOperator::Next()
@@ -11,23 +13,17 @@ std::unique_ptr<DataRow> ProjectionOperator::Current()
 {
     auto innerCurrent = innerOperator->Current();
     std::vector<DataCell> cells;
-    for (auto i : projection.columns)
+    for (auto &column_expr : m_columns)
     {
-        auto cell = innerCurrent->cells[i];
-        cells.push_back(cell);
+        cells.push_back(column_expr->Evaluate(innerCurrent.get()));
     }
-    return std::unique_ptr<DataRow>(new DataRow{cells});
+    return std::make_unique<DataRow>(DataRow{cells});
 }
 
-TableDefinition ProjectionOperator::GetMetadata()
+auto ProjectionExecutionPlanNode::Translate(TranslateContext *context) -> DbOperator_Ptr
 {
-    auto metadata = innerOperator->GetMetadata();
-    std::vector<Column> columns;
-    for (auto i : projection.columns)
-    {
-        auto cell = metadata.columns[i];
-        columns.push_back(cell);
-    }
-    return TableDefinition{metadata.name, columns};
+    auto parentNode = m_parent->Translate(context);
+    return std::make_unique<ProjectionOperator>(parentNode, m_columns);
 }
+
 } // namespace DBCPP_Operators

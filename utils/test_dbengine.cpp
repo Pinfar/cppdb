@@ -1,9 +1,8 @@
 #include "test_dbengine.h"
-#include "../operators/execution_plan.h"
 #include "../query_engine/compiler.h"
-#include "../storage/dbreader.h"
 #include "../storage/dbwriter.h"
 #include "formatter.h"
+#include "operators/execution_plan_base.h"
 
 namespace DBCPP::Utils
 {
@@ -55,11 +54,10 @@ std::string TestDbEngine::RunSql(std::string &sql)
     DBCPP::Storage::DbMetadata metadata{GetStorage()};
     DBCPP::QueryEngine::Compiler compiler{metadata};
     DBCPP_Operators::ExecutionPlan executionPlan = compiler.PlanQuery(select.get());
-    DBCPP_Storage::DBReader reader{GetStorage()};
-    auto execution = reader.ExecutePlan(std::move(executionPlan));
+    DBCPP_Operators::TranslateContext context{GetStorage()};
+    auto execution = executionPlan.rootNode->Translate(&context);
 
-    auto tableData = execution->GetMetadata();
-    std::string result = GetSerializedOpearatorOutput(*execution, tableData);
+    std::string result = GetSerializedOpearatorOutput(*execution, executionPlan.column_labels);
     return result;
 }
 } // namespace DBCPP::Utils

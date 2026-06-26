@@ -1,4 +1,5 @@
 #include "full_scan.h"
+#include <memory>
 namespace DBCPP_Operators
 {
 FullScanOperator::FullScanOperator(StorageEngine *storageEngine, std::string tableName)
@@ -38,15 +39,16 @@ std::unique_ptr<DataRow> FullScanOperator::Current()
     return std::make_unique<DataRow>(currentPage->rows[currentPosition]);
 }
 
-TableDefinition FullScanOperator::GetMetadata()
-{
-    return metadata.definition;
-}
-
 void FullScanOperator::Reset()
 {
     int pageId = metadata.dataPages[0];
     currentPage = storageEngine->getDataPage(pageId);
     currentPosition = -1;
 }
+
+auto FullScanExecutionPlanNode::Translate(TranslateContext *context) -> DbOperator_Ptr
+{
+    return std::make_unique<FullScanOperator>(context->storageEngine, m_tableName);
+}
+
 } // namespace DBCPP_Operators

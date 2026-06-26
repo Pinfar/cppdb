@@ -2,6 +2,8 @@
 #include "../utils/formatter.h"
 #include "../utils/serialization.h"
 #include <gtest/gtest.h>
+#include <string>
+#include <vector>
 
 TEST(FormatterTests, CellConvertedToStringCorrectly)
 {
@@ -15,9 +17,9 @@ TEST(FormatterTests, CellConvertedToStringCorrectly)
     EXPECT_EQ(iCellResult, "2141628429");
 }
 
-TableDefinition GetSampleTable()
+std::vector<std::string> GetSampleTable()
 {
-    return TableDefinition{"Table1", {{"Column1", ColumnType::String}, {"Column2", ColumnType::Int}}};
+    return {"Column1", "Column2"};
 }
 
 TEST(FormatterTests, RowIsPrintedCorrectly)

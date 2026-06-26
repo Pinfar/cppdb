@@ -1,5 +1,4 @@
 #pragma once
-#include "../operators/execution_plan.h"
 #include "../sql_interface/parser.h"
 #include "../storage/storage.h"
 

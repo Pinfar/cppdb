@@ -62,7 +62,7 @@ TEST(FullScanTests, OperatorOutputIsPrintedCorrectly)
 {
     auto engine = InitStorage();
     DBCPP_Operators::FullScanOperator scan{engine.get(), "Table1"};
-    auto &tableData = engine->getDatabaseHeaderPage().tables[0].definition;
+    std::vector<std::string> tableData{"Column1"};
     auto serialized = GetSerializedOpearatorOutput(scan, tableData);
     EXPECT_EQ(serialized, "Column1\n1\n2\n4\n11\n12\n14\n21\n22\n24\n");
 }

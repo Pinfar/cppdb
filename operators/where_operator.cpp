@@ -22,8 +22,10 @@ std::unique_ptr<DataRow> WhereOperator::Current()
     return std::move(current);
 }
 
-TableDefinition WhereOperator::GetMetadata()
+auto FilterExecutionPlanNode::Translate(TranslateContext *context) -> DbOperator_Ptr
 {
-    return innerOperator->GetMetadata();
+    auto parentNode = m_parent->Translate(context);
+    return std::make_unique<WhereOperator>(parentNode, m_condition);
 }
+
 } // namespace DBCPP_Operators

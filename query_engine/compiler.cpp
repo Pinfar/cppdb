@@ -1,6 +1,13 @@
 #include "compiler.h"
+#include "operators/full_scan.h"
+#include "operators/projection_operator.h"
+#include "operators/where_operator.h"
 #include <functional>
+#include <memory>
 #include <stdexcept>
+#include <string>
+#include <utility>
+#include <vector>
 
 namespace DBCPP::QueryEngine
 {
@@ -9,36 +16,38 @@ ExecutionPlan Compiler::PlanQuery(DBCPP::SqlInterface::SelectNode *node)
 {
     auto projectionOperator = CreateProjectionNode(node);
 
-    ExecutionPlan executionPlan{std::move(projectionOperator)};
+    std::vector<std::string> labels{"Col1", "Col2"};
+    ExecutionPlan executionPlan{std::move(projectionOperator), std::move(labels)};
 
     return executionPlan;
 }
 
-DBCPP_Operators::PlanNode_ptr Compiler::CreateTableAccessNode(DBCPP::SqlInterface::SelectNode *node)
+DBCPP_Operators::ExecutionPlanNode_ptr Compiler::CreateTableAccessNode(DBCPP::SqlInterface::SelectNode *node)
 {
     m_currentTableContext = m_metadata.GetTableDefinition(node->from->tableName);
-    return PlanNode::CreateTableAccess(node->from->tableName);
+    return std::make_unique<FullScanExecutionPlanNode>(node->from->tableName);
 }
-DBCPP_Operators::PlanNode_ptr Compiler::CreateFilterNode(DBCPP::SqlInterface::SelectNode *node)
+DBCPP_Operators::ExecutionPlanNode_ptr Compiler::CreateFilterNode(DBCPP::SqlInterface::SelectNode *node)
 {
     using namespace DBCPP::SqlInterface;
     auto scan = CreateTableAccessNode(node);
     ExprOper_ptr condition = CreateExpressionOperator(node->where->condition.get());
-    return PlanNode::CreateFilter(scan, condition);
+    return std::make_unique<FilterExecutionPlanNode>(scan, condition);
 }
 
-DBCPP_Operators::PlanNode_ptr Compiler::CreateProjectionNode(DBCPP::SqlInterface::SelectNode *node)
+DBCPP_Operators::ExecutionPlanNode_ptr Compiler::CreateProjectionNode(DBCPP::SqlInterface::SelectNode *node)
 {
     auto where = CreateFilterNode(node);
-    std::vector<int> columns;
+    std::vector<ExprOper_ptr> columns;
+    std::vector<std::string> names;
     for (auto &column : node->columnList->columns)
     {
-        int idx = m_currentTableContext->getColumnIdx(column);
-        columns.push_back(idx);
+        auto expr_node = CreateExpressionOperator(column.get());
+        columns.push_back(std::move(expr_node));
+        names.emplace_back("Column"); // TODO - we need to think how to solve this
     }
 
-    return std::unique_ptr<PlanNode>(
-        new PlanNode{DbOperator::Projection, {ProjectionDefinition{std::move(columns)}}, std::move(where), {}});
+    return std::make_unique<ProjectionExecutionPlanNode>(where, names, columns);
 }
 
 ExprOper_ptr Compiler::CreateExpressionOperator(AnyExpression *nodeExpr)

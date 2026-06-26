@@ -49,7 +49,7 @@ using From_ptr = std::unique_ptr<FromNode>;
 
 struct SelectColumnList
 {
-    std::vector<std::string> columns;
+    std::vector<Expr_ptr> columns;
 };
 
 using SelectColumnList_ptr = std::unique_ptr<SelectColumnList>;
@@ -83,7 +83,7 @@ class Parser
     From_ptr From();
     Where_ptr Where();
     SelectColumnList_ptr ColumnList();
-    Expr_ptr MakeOrExpression();
+    Expr_ptr MakeExpression();
     Expr_ptr MakeAndExpression();
     Expr_ptr MakeBinaryExpression();
     Expr_ptr MakeLiteralExpression();
