@@ -20,6 +20,7 @@ class Expression
     {
         return m_type;
     }
+    virtual ~Expression() = default;
 };
 
 using ExprOper_ptr = std::unique_ptr<Expression>;

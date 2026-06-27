@@ -1,14 +1,17 @@
 #include "formatter.h"
 #include "serialization.h"
+#include <cstddef>
 #include <vector>
 
 std::string GetSerializedHeader(std::vector<std::string> &columns)
 {
-    std::string result = "";
-    for (int i = 0; i < columns.size(); i++)
+    std::string result;
+    for (size_t i = 0; i < columns.size(); i++)
     {
         if (i > 0)
+        {
             result += ";";
+        }
         result += columns[i];
     }
     return result;
@@ -16,11 +19,13 @@ std::string GetSerializedHeader(std::vector<std::string> &columns)
 
 std::string GetSerializedRow(std::unique_ptr<DataRow> &row)
 {
-    std::string result = "";
-    for (int i = 0; i < row->cells.size(); i++)
+    std::string result;
+    for (size_t i = 0; i < row->cells.size(); i++)
     {
         if (i > 0)
+        {
             result += ";";
+        }
         result += GetStringValue(row->cells[i]);
     }
     return result;

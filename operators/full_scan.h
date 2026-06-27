@@ -8,8 +8,8 @@ namespace DBCPP_Operators
 class FullScanOperator : public AbstractDbOperator
 {
   private:
-    StorageEngine *storageEngine;
-    std::string tableName;
+    StorageEngine *m_storageEngine;
+    std::string m_tableName;
     DataPage *currentPage;
     int currentPosition = -1;
     TableHeader metadata;

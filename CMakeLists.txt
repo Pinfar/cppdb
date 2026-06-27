@@ -64,6 +64,9 @@ else()
     target_compile_options(db_engine PRIVATE -Wall -Wextra -Wpedantic -Wshadow)
 endif()
 
+add_compile_options(-fsanitize=address,undefined)
+add_link_options(-fsanitize=address,undefined)
+
 enable_testing()
 
 add_executable(dbcpp_test)

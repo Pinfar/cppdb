@@ -6,7 +6,7 @@ namespace DBCPP::SqlInterface
 
 static bool isAlpha(char current)
 {
-    return current >= 'a' && current <= 'z' || current >= 'A' && current <= 'Z' || current == '_';
+    return (current >= 'a' && current <= 'z') || (current >= 'A' && current <= 'Z') || current == '_';
 }
 
 static bool isNumber(char current)
