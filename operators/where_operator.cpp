@@ -6,11 +6,11 @@ bool WhereOperator::Next()
 {
     while (true)
     {
-        bool hasAnyValue = innerOperator->Next();
+        bool hasAnyValue = m_innerOperator->Next();
         if (!hasAnyValue)
             return false;
-        current = innerOperator->Current();
-        DataCell result = condition->Evaluate(current.get());
+        current = m_innerOperator->Current();
+        DataCell result = m_condition->Evaluate(current.get());
         bool valueMatches = std::any_cast<bool>(result.value);
         if (valueMatches)
             return true;

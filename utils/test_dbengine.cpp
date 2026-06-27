@@ -23,7 +23,7 @@ std::unique_ptr<StorageEngine> TestDbEngine::InitStorage()
                                        }});
     std::vector numbers{1, 2, 4, 11, 12, 14, 21, 22, 24};
     std::vector letters{"A", "B", "C", "D", "E", "F", "G", "H", "I"};
-    for (int i = 0; i < numbers.size(); i++)
+    for (size_t i = 0; i < numbers.size(); i++)
     {
         writer.InsertRecord("Table1", CreateRow(numbers[i], letters[i]));
     }

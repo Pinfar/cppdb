@@ -4,7 +4,6 @@
 #include "../storage/dbmetadata.h"
 #include "../types/type_interface.h"
 #include "operators/execution_plan_base.h"
-#include <functional>
 
 namespace DBCPP::QueryEngine
 {
@@ -19,9 +18,9 @@ class Compiler
     }
     ExecutionPlan PlanQuery(SelectNode *node);
 
-    ExprOper_ptr operator()(LiteralExpression &exp);
-    ExprOper_ptr operator()(BinaryExpression &exp);
-    ExprOper_ptr operator()(LogicalExpression &exp);
+    ExprOper_ptr operator()(LiteralExpression &node);
+    ExprOper_ptr operator()(BinaryExpression &node);
+    ExprOper_ptr operator()(LogicalExpression &node);
 
   private:
     DbMetadata m_metadata;
@@ -32,7 +31,7 @@ class Compiler
     ExecutionPlanNode_ptr CreateFilterNode(SelectNode *node);
     ExecutionPlanNode_ptr CreateProjectionNode(SelectNode *node);
     ExprOper_ptr CreateExpressionOperator(AnyExpression *nodeExpr);
-    ExprOper_ptr CreateBinary(ExprOper_ptr &lhs, ExprOper_ptr &rhs, Token op);
-    void Error(std::string message);
+    ExprOper_ptr CreateBinary(ExprOper_ptr &lhs, ExprOper_ptr &rhs, Token operatorToken);
+    static void Error(std::string &&message);
 };
 } // namespace DBCPP::QueryEngine

@@ -1,8 +1,8 @@
 #include "compiler.h"
+#include "metadata/cell.h"
 #include "operators/full_scan.h"
 #include "operators/projection_operator.h"
 #include "operators/where_operator.h"
-#include <functional>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -60,11 +60,13 @@ ExprOper_ptr Compiler::operator()(LiteralExpression &node)
     case TokenType::String: {
         auto value = node.token.GetTokenValue();
         value = value.substr(1, value.length() - 2);
-        return std::make_unique<ConstantExpression>(value);
+        DataCell cell{value};
+        return std::make_unique<ConstantExpression>(cell);
     }
     case TokenType::Number: {
         auto value = stoi(node.token.GetTokenValue());
-        return std::make_unique<ConstantExpression>(value);
+        DataCell cell{value};
+        return std::make_unique<ConstantExpression>(cell);
     };
     case TokenType::Identifier: {
         auto columnName = node.token.GetTokenValue();
@@ -78,29 +80,29 @@ ExprOper_ptr Compiler::operator()(LiteralExpression &node)
         return {}; // unreachable
     }
 }
-ExprOper_ptr Compiler::operator()(BinaryExpression &exp)
+ExprOper_ptr Compiler::operator()(BinaryExpression &node)
 {
-    ExprOper_ptr lhs = CreateExpressionOperator(exp.lhs.get());
-    ExprOper_ptr rhs = CreateExpressionOperator(exp.rhs.get());
+    ExprOper_ptr lhs = CreateExpressionOperator(node.lhs.get());
+    ExprOper_ptr rhs = CreateExpressionOperator(node.rhs.get());
 
-    return CreateBinary(lhs, rhs, exp.oper);
+    return CreateBinary(lhs, rhs, node.oper);
 }
 
-ExprOper_ptr Compiler::operator()(LogicalExpression &exp)
+ExprOper_ptr Compiler::operator()(LogicalExpression &node)
 {
-    ExprOper_ptr lhs = CreateExpressionOperator(exp.lhs.get());
-    ExprOper_ptr rhs = CreateExpressionOperator(exp.rhs.get());
+    ExprOper_ptr lhs = CreateExpressionOperator(node.lhs.get());
+    ExprOper_ptr rhs = CreateExpressionOperator(node.rhs.get());
 
-    return CreateBinary(lhs, rhs, exp.oper);
+    return CreateBinary(lhs, rhs, node.oper);
 }
 
-auto Compiler::CreateBinary(ExprOper_ptr &lhs, ExprOper_ptr &rhs, Token op) -> ExprOper_ptr
+auto Compiler::CreateBinary(ExprOper_ptr &lhs, ExprOper_ptr &rhs, Token operatorToken) -> ExprOper_ptr
 {
-    auto opFunc = m_typeResolver.ResolveBinaryOperator({lhs->GetType(), rhs->GetType(), op.type});
+    auto opFunc = m_typeResolver.ResolveBinaryOperator({lhs->GetType(), rhs->GetType(), operatorToken.type});
     return std::make_unique<BinaryExpressionOperator>(lhs, rhs, opFunc.func, opFunc.returnType);
 }
 
-void Compiler::Error(std::string message)
+void Compiler::Error(std::string &&message)
 {
     throw std::domain_error(message);
 }

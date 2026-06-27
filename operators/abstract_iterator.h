@@ -17,13 +17,13 @@ using DbOperator_Ptr = std::unique_ptr<AbstractDbOperator>;
 class BaseDbOperator : public AbstractDbOperator
 {
   protected:
-    DbOperator_Ptr innerOperator;
+    DbOperator_Ptr m_innerOperator;
 
   public:
-    BaseDbOperator(DbOperator_Ptr innerOperator) : innerOperator{std::move(innerOperator)} {};
+    BaseDbOperator(DbOperator_Ptr innerOperator) : m_innerOperator{std::move(innerOperator)} {};
     virtual void Reset() override
     {
-        innerOperator->Reset();
+        m_innerOperator->Reset();
     }
 };
 } // namespace DBCPP_Operators

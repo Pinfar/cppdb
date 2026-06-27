@@ -30,10 +30,10 @@ class ConstantExpression : public Expression
     DataCell m_constant;
 
   public:
-    ConstantExpression(DataCell constant) : Expression(constant.type), m_constant(constant)
+    ConstantExpression(DataCell &constant) : Expression(constant.type), m_constant(constant)
     {
     }
-    DataCell Evaluate(DataRow *row) override
+    auto Evaluate([[maybe_unused]] DataRow *row) -> DataCell override
     {
         return m_constant;
     }
@@ -48,7 +48,7 @@ class GetCellValueExpression : public Expression
     GetCellValueExpression(int index, ColumnType type) : Expression(type), m_index(index)
     {
     }
-    DataCell Evaluate(DataRow *row) override
+    auto Evaluate(DataRow *row) -> DataCell override
     {
         return row->cells[m_index];
     }
@@ -67,10 +67,10 @@ template <typename T> class EqualsExpression : public Expression
           m_comparisonFunction(comparisonFunction)
     {
     }
-    DataCell Evaluate(DataRow *row) override;
+    auto Evaluate(DataRow *row) -> DataCell override;
 };
 
-template <typename T> inline DataCell EqualsExpression<T>::Evaluate(DataRow *row)
+template <typename T> inline auto EqualsExpression<T>::Evaluate(DataRow *row) -> DataCell
 {
     T lhs = std::any_cast<T>(m_lhs->Evaluate(row).value);
     T rhs = std::any_cast<T>(m_rhs->Evaluate(row).value);

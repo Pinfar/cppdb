@@ -28,7 +28,7 @@ TEST(StorageTests, InformationAboutPagesIsCorrect)
     auto table = header.tables[0];
     for (auto pageId : table.dataPages)
     {
-        const auto page = engine->getDataPage(pageId);
+        auto *const page = engine->getDataPage(pageId);
         EXPECT_EQ(page->id, pageId);
     }
 }

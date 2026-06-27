@@ -7,18 +7,18 @@ namespace DBCPP_Storage
 
 struct DBWriterOptions
 {
-    int maxRecordsPerPage;
+    size_t maxRecordsPerPage;
 };
 
 class DBWriter
 {
   private:
-    StorageEngine &engine;
+    StorageEngine &m_engine;
     int nextTableId = 1;
-    DBWriterOptions options;
+    DBWriterOptions m_options;
 
   public:
-    DBWriter(StorageEngine &engine, DBWriterOptions options) : engine(engine), options(options){};
+    DBWriter(StorageEngine &engine, DBWriterOptions options) : m_engine(engine), m_options(options){};
     void CreateTable(TableDefinition definition);
     void InsertRecord(std::string tableName, DataRow row);
 };

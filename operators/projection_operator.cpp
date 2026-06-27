@@ -6,12 +6,12 @@ namespace DBCPP_Operators
 {
 bool ProjectionOperator::Next()
 {
-    return innerOperator->Next();
+    return m_innerOperator->Next();
 }
 
 std::unique_ptr<DataRow> ProjectionOperator::Current()
 {
-    auto innerCurrent = innerOperator->Current();
+    auto innerCurrent = m_innerOperator->Current();
     std::vector<DataCell> cells;
     for (auto &column_expr : m_columns)
     {

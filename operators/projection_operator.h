@@ -1,5 +1,4 @@
 #pragma once
-#include "../storage/storage.h"
 #include "abstract_iterator.h"
 #include "execution_plan_base.h"
 #include "operators/expressions.h"
