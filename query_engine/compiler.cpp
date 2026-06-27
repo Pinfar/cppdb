@@ -38,15 +38,13 @@ DBCPP_Operators::ExecutionPlanNode_ptr Compiler::CreateProjectionNode(DBCPP::Sql
 {
     auto where = CreateFilterNode(node);
     std::vector<ExprOper_ptr> columns;
-    std::vector<std::string> names;
     for (auto &column : node->columnList->columns)
     {
         auto expr_node = CreateExpressionOperator(column.get());
         columns.push_back(std::move(expr_node));
-        names.emplace_back("Column"); // TODO - we need to think how to solve this
     }
 
-    return std::make_unique<ProjectionExecutionPlanNode>(where, names, columns);
+    return std::make_unique<ProjectionExecutionPlanNode>(where, columns);
 }
 
 ExprOper_ptr Compiler::CreateExpressionOperator(AnyExpression *nodeExpr)

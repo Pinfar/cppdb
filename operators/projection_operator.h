@@ -28,8 +28,7 @@ class ProjectionExecutionPlanNode : public ExecutionPlanNodeBase
     ExecutionPlanNode_ptr m_parent;
 
   public:
-    ProjectionExecutionPlanNode(ExecutionPlanNode_ptr &parent, std::vector<std::string> &column_labels,
-                                std::vector<ExprOper_ptr> &columns)
+    ProjectionExecutionPlanNode(ExecutionPlanNode_ptr &parent, std::vector<ExprOper_ptr> &columns)
         : ExecutionPlanNodeBase(), m_columns{std::move(columns)}, m_parent(std::move(parent))
     {
     }
