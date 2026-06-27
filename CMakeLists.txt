@@ -59,7 +59,7 @@ target_sources(db_engine
 target_include_directories(db_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 if(MSVC)
-    target_compile_options(db_engine PRIVATE /W4)
+    target_compile_options(db_engine PRIVATE /W4 /WX)
 else()
     target_compile_options(db_engine PRIVATE -Wall -Wextra -Wpedantic -Wshadow -Werror)
 endif()
