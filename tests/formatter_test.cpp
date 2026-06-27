@@ -41,7 +41,6 @@ TEST(FormatterTests, TableIsPrintedCorrectly)
 {
     auto table = GetSampleTable();
     std::vector<std::unique_ptr<DataRow>> rows;
-    auto drow = new DataRow{std::vector<DataCell>{{std::string("AAA")}, {10}}};
     rows.push_back(std::make_unique<DataRow>(DataRow{std::vector<DataCell>{{std::string("AAA")}, {10}}}));
     rows.push_back(std::make_unique<DataRow>(DataRow{std::vector<DataCell>{{std::string("NNN")}, {20}}}));
     auto serialized = GetSerializedResult(rows, table);
