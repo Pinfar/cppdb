@@ -1,17 +1,14 @@
 cmake_minimum_required(VERSION 3.14)
 project(my_project LANGUAGES CXX)
 
-# Wybór standardu C++
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Ustawienie domyślnego trybu budowania (Debug), jeśli użytkownik nie podał innego
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build." FORCE)
 endif()
 
-# --- ZALEŻNOŚCI (GoogleTest) ---
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -20,9 +17,6 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-# ============================================================================
-# 1. TARGET: SILNIK BAZY DANYCH (Biblioteka statyczna)
-# ============================================================================
 add_library(db_engine STATIC)
 
 target_sources(db_engine
@@ -62,20 +56,14 @@ target_sources(db_engine
     types/type_base.cpp
 )
 
-# Definiujemy, gdzie kompilator ma szukać plików nagłówkowych.
-# Dzięki temu w testach i aplikacji możesz czytelnie inkludować pliki.
 target_include_directories(db_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-# Włączamy rygorystyczne ostrzeżenia kompilatora dla silnika
 if(MSVC)
     target_compile_options(db_engine PRIVATE /W4)
 else()
     target_compile_options(db_engine PRIVATE -Wall -Wextra -Wpedantic -Wshadow)
 endif()
 
-# ============================================================================
-# 2. TARGET: TESTY JEDNOSTKOWE
-# ============================================================================
 enable_testing()
 
 add_executable(dbcpp_test)
@@ -90,7 +78,6 @@ target_sources(dbcpp_test
     tests/sql_test.cpp
 )
 
-# Testy linkujemy z naszym silnikiem (db_engine) oraz GoogleTestem
 target_link_libraries(dbcpp_test
   PRIVATE
     db_engine
@@ -100,8 +87,5 @@ target_link_libraries(dbcpp_test
 include(GoogleTest)
 gtest_discover_tests(dbcpp_test)
 
-# ============================================================================
-# 3. PRZYSZŁOŚĆ: Główna aplikacja (Opcjonalnie - odkomentuj, gdy dodasz main.cpp)
-# ============================================================================
 # add_executable(db_cli main.cpp)
 # target_link_libraries(db_cli PRIVATE db_engine)
