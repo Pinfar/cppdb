@@ -2,6 +2,7 @@
 #include "metadata/cell.h"
 #include "operators/full_scan.h"
 #include "operators/projection_operator.h"
+#include "operators/single_row_operator.h"
 #include "operators/where_operator.h"
 #include <memory>
 #include <stdexcept>
@@ -23,13 +24,20 @@ ExecutionPlan Compiler::PlanQuery(DBCPP::SqlInterface::SelectNode *node)
 
 DBCPP_Operators::ExecutionPlanNode_ptr Compiler::CreateTableAccessNode(DBCPP::SqlInterface::SelectNode *node)
 {
+    if (!node->from)
+    {
+        return std::make_unique<SingleRowPlanNode>();
+    }
     m_currentTableContext = m_metadata.GetTableDefinition(node->from->tableName);
     return std::make_unique<FullScanExecutionPlanNode>(node->from->tableName);
 }
 DBCPP_Operators::ExecutionPlanNode_ptr Compiler::CreateFilterNode(DBCPP::SqlInterface::SelectNode *node)
 {
-    using namespace DBCPP::SqlInterface;
     auto scan = CreateTableAccessNode(node);
+    if (!node->where)
+    {
+        return scan;
+    }
     ExprOper_ptr condition = CreateExpressionOperator(node->where->condition.get());
     return std::make_unique<FilterExecutionPlanNode>(scan, condition);
 }

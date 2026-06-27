@@ -1,4 +1,5 @@
 #include "parser.h"
+#include "sql_interface/scanner.h"
 #include <stdexcept>
 namespace DBCPP::SqlInterface
 {
@@ -40,9 +41,14 @@ Select_ptr Parser::Select()
     Consume(TokenType::Select);
     auto node = std::make_unique<SelectNode>();
     node->columnList = ColumnList();
-    node->from = From();
-    if (Peek().type == TokenType::Where)
-        node->where = Where();
+    if (Peek().type == TokenType::From)
+    {
+        node->from = From();
+        if (Peek().type == TokenType::Where)
+        {
+            node->where = Where();
+        }
+    }
     Consume(TokenType::Eof);
     return node;
 }
@@ -79,7 +85,8 @@ SelectColumnList_ptr Parser::ColumnList()
         }
         node->columns.push_back(std::move(name));
 
-        if (Peek().type == TokenType::From)
+        auto type = Peek().type;
+        if (type == TokenType::From || type == TokenType::Eof)
         {
             break;
         }

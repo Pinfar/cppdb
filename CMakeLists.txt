@@ -42,6 +42,8 @@ target_sources(db_engine
     operators/projection_operator.h
     operators/expressions.h
     operators/execution_plan_base.h
+    operators/single_row_operator.cpp
+    operators/single_row_operator.h
     sql_interface/scanner.h
     sql_interface/scanner.cpp
     sql_interface/parser.h

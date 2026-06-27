@@ -68,4 +68,9 @@ TEST(SqlTest, SqlWithFunnyMath)
     RunTest("select Column1,Column2 from Table1 where Column1+1+2-2*2/2=2", "Column1;Column2\n1;A\n");
 }
 
+TEST(SqlTest, SqlWithoutFrom)
+{
+    RunTest("select 1+1", "Unknown\n2\n");
+}
+
 } // namespace DBCPP::SqlTest
