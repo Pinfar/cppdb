@@ -82,4 +82,9 @@ TEST(SqlTest, OrderOfOperations2)
     RunTest("select 2*2+2", "Unknown\n6\n");
 }
 
+TEST(SqlTest, ColumnAliases)
+{
+    RunTest("select 1 as Value", "Value\n1\n");
+}
+
 } // namespace DBCPP::SqlTest

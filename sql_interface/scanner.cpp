@@ -128,6 +128,10 @@ Token Scanner::consumeIdentifier()
     {
         type = TokenType::And;
     }
+    else if (value == "as")
+    {
+        type = TokenType::As;
+    }
     return createToken(type);
 }
 
