@@ -64,13 +64,22 @@ TEST(SqlTest, SqlWithPlus)
 
 TEST(SqlTest, SqlWithFunnyMath)
 {
-    // Order of math operations is still not preserved - needs to be updated later
     RunTest("select Column1,Column2 from Table1 where Column1+1+2-2*2/2=2", "Column1;Column2\n1;A\n");
 }
 
 TEST(SqlTest, SqlWithoutFrom)
 {
     RunTest("select 1+1", "Unknown\n2\n");
+}
+
+TEST(SqlTest, OrderOfOperations)
+{
+    RunTest("select 2+2*2", "Unknown\n6\n");
+}
+
+TEST(SqlTest, OrderOfOperations2)
+{
+    RunTest("select 2*2+2", "Unknown\n6\n");
 }
 
 } // namespace DBCPP::SqlTest

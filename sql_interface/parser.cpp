@@ -115,31 +115,41 @@ Expr_ptr Parser::MakeAndExpression()
 
 Expr_ptr Parser::MakeBinaryExpression()
 {
-    auto node = MakeArithmeticExpression();
+    auto node = MakePlusMinusExpression();
     switch (Peek().type)
     {
     case TokenType::Eq:
     case TokenType::Neq:
     case TokenType::Gt:
     case TokenType::Lt:
-        return std::make_unique<AnyExpression>(
-            BinaryExpression{std::move(node), Advance(), MakeArithmeticExpression()});
+        return std::make_unique<AnyExpression>(BinaryExpression{std::move(node), Advance(), MakePlusMinusExpression()});
     default:
         return node;
     }
 }
 
-Expr_ptr Parser::MakeArithmeticExpression()
+auto Parser::MakePlusMinusExpression() -> Expr_ptr
 {
-    auto node = MakeLiteralExpression();
+    auto node = MakeTimesDivideExpression();
     switch (Peek().type)
     {
     case TokenType::Plus:
     case TokenType::Minus:
+        return std::make_unique<AnyExpression>(BinaryExpression{std::move(node), Advance(), MakePlusMinusExpression()});
+    default:
+        return node;
+    }
+}
+
+auto Parser::MakeTimesDivideExpression() -> Expr_ptr
+{
+    auto node = MakeLiteralExpression();
+    switch (Peek().type)
+    {
     case TokenType::Star:
     case TokenType::Slash:
         return std::make_unique<AnyExpression>(
-            BinaryExpression{std::move(node), Advance(), MakeArithmeticExpression()});
+            BinaryExpression{std::move(node), Advance(), MakeTimesDivideExpression()});
     default:
         return node;
     }

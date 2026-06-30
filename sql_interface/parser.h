@@ -89,7 +89,8 @@ class Parser
     Expr_ptr MakeAndExpression();
     Expr_ptr MakeBinaryExpression();
     Expr_ptr MakeLiteralExpression();
-    Expr_ptr MakeArithmeticExpression();
+    auto MakeTimesDivideExpression() -> Expr_ptr;
+    auto MakePlusMinusExpression() -> Expr_ptr;
 
   public:
     Parser(std::vector<Token> &tokens) : m_tokens(std::move(tokens))
