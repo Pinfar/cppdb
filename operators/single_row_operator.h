@@ -16,6 +16,7 @@ class SingleRowOperator : public AbstractDbOperator
     auto Next() -> bool override;
     auto Current() -> std::unique_ptr<DataRow> override;
     void Reset() override;
+    auto GetOutputSchema() -> QuerySchema override;
 };
 
 class SingleRowPlanNode : public ExecutionPlanNodeBase

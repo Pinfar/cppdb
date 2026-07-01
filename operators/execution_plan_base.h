@@ -1,5 +1,6 @@
 #pragma once
 #include "operators/abstract_iterator.h"
+#include "storage/storage.h"
 namespace DBCPP_Operators
 {
 struct TranslateContext
@@ -16,6 +17,5 @@ using ExecutionPlanNode_ptr = std::unique_ptr<ExecutionPlanNodeBase>;
 struct ExecutionPlan
 {
     ExecutionPlanNode_ptr rootNode;
-    std::vector<std::string> column_labels;
 };
 } // namespace DBCPP_Operators

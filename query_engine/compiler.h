@@ -16,7 +16,10 @@ class Compiler
     Compiler(DbMetadata metadata) : m_metadata(metadata)
     {
     }
-    ExecutionPlan PlanQuery(SelectNode *node);
+    ExecutionPlan PlanQuery(SelectExpression *node);
+
+    auto operator()(SelectNode &node) -> ExecutionPlanNode_ptr;
+    auto operator()(UnionAllNode &node) -> ExecutionPlanNode_ptr;
 
     ExprOper_ptr operator()(LiteralExpression &node);
     ExprOper_ptr operator()(BinaryExpression &node);
@@ -29,7 +32,6 @@ class Compiler
 
     ExecutionPlanNode_ptr CreateTableAccessNode(SelectNode *node);
     ExecutionPlanNode_ptr CreateFilterNode(SelectNode *node);
-    ExecutionPlanNode_ptr CreateProjectionNode(SelectNode *node);
     ExprOper_ptr CreateExpressionOperator(AnyExpression *nodeExpr);
     ExprOper_ptr CreateBinary(ExprOper_ptr &lhs, ExprOper_ptr &rhs, Token operatorToken);
     static void Error(std::string &&message);

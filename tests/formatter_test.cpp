@@ -17,9 +17,9 @@ TEST(FormatterTests, CellConvertedToStringCorrectly)
     EXPECT_EQ(iCellResult, "2141628429");
 }
 
-std::vector<std::string> GetSampleTable()
+std::vector<Column> GetSampleTable()
 {
-    return {"Column1", "Column2"};
+    return {{"Column1"}, {"Column2"}};
 }
 
 TEST(FormatterTests, RowIsPrintedCorrectly)

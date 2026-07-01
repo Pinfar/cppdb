@@ -57,7 +57,8 @@ std::string TestDbEngine::RunSql(std::string &sql)
     DBCPP_Operators::TranslateContext context{GetStorage()};
     auto execution = executionPlan.rootNode->Translate(&context);
 
-    std::string result = GetSerializedOpearatorOutput(*execution, executionPlan.column_labels);
+    auto columns = execution->GetOutputSchema().columns;
+    std::string result = GetSerializedOpearatorOutput(*execution, columns);
     return result;
 }
 } // namespace DBCPP::Utils

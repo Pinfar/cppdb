@@ -17,9 +17,10 @@ class FullScanOperator : public AbstractDbOperator
   public:
     FullScanOperator(StorageEngine *storageEngine, std::string tableName);
     FullScanOperator(FullScanOperator &) = delete;
-    virtual bool Next() override;
-    virtual std::unique_ptr<DataRow> Current() override;
-    virtual void Reset() override;
+    auto Next() -> bool override;
+    auto Current() -> std::unique_ptr<DataRow> override;
+    void Reset() override;
+    auto GetOutputSchema() -> QuerySchema override;
 };
 
 class FullScanExecutionPlanNode : public ExecutionPlanNodeBase

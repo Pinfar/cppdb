@@ -45,6 +45,12 @@ void FullScanOperator::Reset()
     currentPosition = -1;
 }
 
+auto FullScanOperator::GetOutputSchema() -> QuerySchema
+{
+    auto copy = metadata.definition.columns;
+    return {copy};
+}
+
 auto FullScanExecutionPlanNode::Translate(TranslateContext *context) -> DbOperator_Ptr
 {
     return std::make_unique<FullScanOperator>(context->storageEngine, m_tableName);

@@ -132,25 +132,27 @@ TEST(ParserTest, VectorIsMoved)
 TEST(ParserTest, SelectStatementIsParsed)
 {
     std::string sql = "select a,b,c from x";
-    auto select = compileSql(sql);
-    ASSERT_TRUE(select);
-    ASSERT_TRUE(select->columnList);
-    ASSERT_EQ(select->columnList->columns.size(), 3);
+    auto select_ptr = compileSql(sql);
+    ASSERT_TRUE(select_ptr);
+    auto &select = std::get<SelectNode>(*select_ptr);
+    ASSERT_TRUE(select.columnList);
+    ASSERT_EQ(select.columnList->columns.size(), 3);
     // EXPECT_EQ(select->columnList->columns[0], "a");
     // EXPECT_EQ(select->columnList->columns[1], "b");
     // EXPECT_EQ(select->columnList->columns[2], "c");
-    ASSERT_TRUE(select->from);
-    EXPECT_EQ(select->from->tableName, "x");
+    ASSERT_TRUE(select.from);
+    EXPECT_EQ(select.from->tableName, "x");
 }
 
 TEST(ParserTest, WhereStatementIsParsed)
 {
     std::string sql = "select a,b,c from x where a=1";
-    auto select = compileSql(sql);
+    auto select_ptr = compileSql(sql);
     ASSERT_TRUE(select);
-    ASSERT_TRUE(select->where);
-    ASSERT_TRUE(select->where->condition);
-    auto &condition = std::get<BinaryExpression>(*select->where->condition);
+    auto &select = std::get<SelectNode>(*select_ptr);
+    ASSERT_TRUE(select.where);
+    ASSERT_TRUE(select.where->condition);
+    auto &condition = std::get<BinaryExpression>(*select.where->condition);
     auto &lhs = std::get<LiteralExpression>(*condition.lhs);
     auto &rhs = std::get<LiteralExpression>(*condition.rhs);
     EXPECT_EQ(lhs.token.GetTokenValue(), "a");

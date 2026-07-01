@@ -3,6 +3,7 @@
 #include "operators/full_scan.h"
 #include "operators/projection_operator.h"
 #include "operators/single_row_operator.h"
+#include "operators/union_all_operator.h"
 #include "operators/where_operator.h"
 #include <memory>
 #include <stdexcept>
@@ -13,16 +14,18 @@
 namespace DBCPP::QueryEngine
 {
 using namespace DBCPP_Operators;
-ExecutionPlan Compiler::PlanQuery(DBCPP::SqlInterface::SelectNode *node)
-{
-    auto projectionOperator = CreateProjectionNode(node);
+using namespace DBCPP::SqlInterface;
 
-    ExecutionPlan executionPlan{std::move(projectionOperator), std::move(node->columnList->names)};
+ExecutionPlan Compiler::PlanQuery(SelectExpression *node)
+{
+    auto projectionOperator = std::visit(*this, *node);
+
+    ExecutionPlan executionPlan{std::move(projectionOperator)};
 
     return executionPlan;
 }
 
-DBCPP_Operators::ExecutionPlanNode_ptr Compiler::CreateTableAccessNode(DBCPP::SqlInterface::SelectNode *node)
+ExecutionPlanNode_ptr Compiler::CreateTableAccessNode(SelectNode *node)
 {
     if (!node->from)
     {
@@ -31,7 +34,7 @@ DBCPP_Operators::ExecutionPlanNode_ptr Compiler::CreateTableAccessNode(DBCPP::Sq
     m_currentTableContext = m_metadata.GetTableDefinition(node->from->tableName);
     return std::make_unique<FullScanExecutionPlanNode>(node->from->tableName);
 }
-DBCPP_Operators::ExecutionPlanNode_ptr Compiler::CreateFilterNode(DBCPP::SqlInterface::SelectNode *node)
+ExecutionPlanNode_ptr Compiler::CreateFilterNode(SelectNode *node)
 {
     auto scan = CreateTableAccessNode(node);
     if (!node->where)
@@ -42,17 +45,24 @@ DBCPP_Operators::ExecutionPlanNode_ptr Compiler::CreateFilterNode(DBCPP::SqlInte
     return std::make_unique<FilterExecutionPlanNode>(scan, condition);
 }
 
-DBCPP_Operators::ExecutionPlanNode_ptr Compiler::CreateProjectionNode(DBCPP::SqlInterface::SelectNode *node)
+auto Compiler::operator()(SelectNode &node) -> ExecutionPlanNode_ptr
 {
-    auto where = CreateFilterNode(node);
+    auto where = CreateFilterNode(&node);
     std::vector<ExprOper_ptr> columns;
-    for (auto &column : node->columnList->columns)
+    for (auto &column : node.columnList->columns)
     {
         auto expr_node = CreateExpressionOperator(column.get());
         columns.push_back(std::move(expr_node));
     }
 
-    return std::make_unique<ProjectionExecutionPlanNode>(where, columns);
+    return std::make_unique<ProjectionExecutionPlanNode>(where, columns, node.columnList->names);
+}
+
+auto Compiler::operator()(UnionAllNode &node) -> ExecutionPlanNode_ptr
+{
+    auto l_parent = std::visit(*this, *node.lhs);
+    auto r_parent = std::visit(*this, *node.rhs);
+    return std::make_unique<UnionAllExecutionPlanNode>(l_parent, r_parent);
 }
 
 ExprOper_ptr Compiler::CreateExpressionOperator(AnyExpression *nodeExpr)

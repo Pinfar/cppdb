@@ -1,9 +1,9 @@
 #include "formatter.h"
-#include "serialization.h"
+#include "metadata/cell.h"
 #include <cstddef>
 #include <vector>
 
-std::string GetSerializedHeader(std::vector<std::string> &columns)
+std::string GetSerializedHeader(std::vector<Column> &columns)
 {
     std::string result;
     for (size_t i = 0; i < columns.size(); i++)
@@ -12,7 +12,7 @@ std::string GetSerializedHeader(std::vector<std::string> &columns)
         {
             result += ";";
         }
-        result += columns[i];
+        result += columns[i].name;
     }
     return result;
 }
@@ -31,7 +31,7 @@ std::string GetSerializedRow(std::unique_ptr<DataRow> &row)
     return result;
 }
 
-std::string GetSerializedResult(std::vector<std::unique_ptr<DataRow>> &result, std::vector<std::string> &columns)
+std::string GetSerializedResult(std::vector<std::unique_ptr<DataRow>> &result, std::vector<Column> &columns)
 {
     auto serialized = GetSerializedHeader(columns) + "\n";
     for (auto &row : result)
@@ -41,7 +41,7 @@ std::string GetSerializedResult(std::vector<std::unique_ptr<DataRow>> &result, s
     return serialized;
 }
 
-std::string GetSerializedOpearatorOutput(DBCPP_Operators::AbstractDbOperator &oper, std::vector<std::string> &columns)
+std::string GetSerializedOpearatorOutput(DBCPP_Operators::AbstractDbOperator &oper, std::vector<Column> &columns)
 {
     auto serialized = GetSerializedHeader(columns) + "\n";
     while (oper.Next())

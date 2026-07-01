@@ -25,7 +25,9 @@ enum class TokenType
     Plus,
     Minus,
     Slash,
-    As
+    As,
+    Union,
+    All
 };
 
 struct Token

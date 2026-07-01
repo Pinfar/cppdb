@@ -87,4 +87,14 @@ TEST(SqlTest, ColumnAliases)
     RunTest("select 1 as Value", "Value\n1\n");
 }
 
+TEST(SqlTest, UnionAll)
+{
+    RunTest("select 1 as Value union all select 2", "Value\n1\n2\n");
+}
+
+TEST(SqlTest, UnionAllMany)
+{
+    RunTest("select 1 as Value union all select 2 union all select 3 union all select 4", "Value\n1\n2\n3\n4\n");
+}
+
 } // namespace DBCPP::SqlTest

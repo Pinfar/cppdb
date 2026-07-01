@@ -3,6 +3,7 @@
 #include "../storage/storage.h"
 #include "../utils/formatter.h"
 #include "../utils/serialization.h"
+#include "metadata/cell.h"
 #include <gtest/gtest.h>
 namespace FullScanTestsNS
 {
@@ -62,7 +63,7 @@ TEST(FullScanTests, OperatorOutputIsPrintedCorrectly)
 {
     auto engine = InitStorage();
     DBCPP_Operators::FullScanOperator scan{engine.get(), "Table1"};
-    std::vector<std::string> tableData{"Column1"};
+    std::vector<Column> tableData{{"Column1"}};
     auto serialized = GetSerializedOpearatorOutput(scan, tableData);
     EXPECT_EQ(serialized, "Column1\n1\n2\n4\n11\n12\n14\n21\n22\n24\n");
 }

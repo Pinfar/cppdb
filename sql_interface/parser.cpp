@@ -1,6 +1,8 @@
 #include "parser.h"
 #include "sql_interface/scanner.h"
+#include <memory>
 #include <stdexcept>
+#include <utility>
 namespace DBCPP::SqlInterface
 {
 void Parser::Error(std::string message, Token token)
@@ -36,21 +38,32 @@ Token Parser::Peek()
     return m_tokens[m_position];
 }
 
+auto Parser::UnionAll() -> Select_ptr
+{
+    auto node = Select();
+    if (Peek().type != TokenType::Union)
+    {
+        return node;
+    }
+    Consume(TokenType::Union);
+    Consume(TokenType::All);
+    return std::make_unique<SelectExpression>(UnionAllNode{std::move(node), UnionAll()});
+}
+
 Select_ptr Parser::Select()
 {
     Consume(TokenType::Select);
-    auto node = std::make_unique<SelectNode>();
-    node->columnList = ColumnList();
+    SelectNode node;
+    node.columnList = ColumnList();
     if (Peek().type == TokenType::From)
     {
-        node->from = From();
+        node.from = From();
         if (Peek().type == TokenType::Where)
         {
-            node->where = Where();
+            node.where = Where();
         }
     }
-    Consume(TokenType::Eof);
-    return node;
+    return std::make_unique<SelectExpression>(std::move(node));
 }
 
 From_ptr Parser::From()
@@ -92,7 +105,7 @@ SelectColumnList_ptr Parser::ColumnList()
         node->columns.push_back(std::move(name));
 
         auto type = Peek().type;
-        if (type == TokenType::From || type == TokenType::Eof)
+        if (type != TokenType::Comma)
         {
             break;
         }
@@ -174,7 +187,9 @@ Expr_ptr Parser::MakeLiteralExpression()
 
 Select_ptr Parser::Parse()
 {
-    return Select();
+    auto root = UnionAll();
+    Consume(TokenType::Eof);
+    return root;
 }
 
 ParsingError Parser::GetError()

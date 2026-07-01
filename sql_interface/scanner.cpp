@@ -132,6 +132,14 @@ Token Scanner::consumeIdentifier()
     {
         type = TokenType::As;
     }
+    else if (value == "union")
+    {
+        type = TokenType::Union;
+    }
+    else if (value == "all")
+    {
+        type = TokenType::All;
+    }
     return createToken(type);
 }
 

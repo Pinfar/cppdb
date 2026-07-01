@@ -56,6 +56,11 @@ struct SelectColumnList
 
 using SelectColumnList_ptr = std::unique_ptr<SelectColumnList>;
 
+struct SelectNode;
+struct UnionAllNode;
+using SelectExpression = std::variant<SelectNode, UnionAllNode>;
+using Select_ptr = std::unique_ptr<SelectExpression>;
+
 struct SelectNode
 {
     SelectColumnList_ptr columnList;
@@ -63,7 +68,11 @@ struct SelectNode
     Where_ptr where;
 };
 
-using Select_ptr = std::unique_ptr<SelectNode>;
+struct UnionAllNode
+{
+    Select_ptr lhs;
+    Select_ptr rhs;
+};
 
 struct ParsingError
 {
@@ -82,6 +91,7 @@ class Parser
     Token Advance();
     Token Peek();
     Select_ptr Select();
+    auto UnionAll() -> Select_ptr;
     From_ptr From();
     Where_ptr Where();
     SelectColumnList_ptr ColumnList();
@@ -91,6 +101,7 @@ class Parser
     Expr_ptr MakeLiteralExpression();
     auto MakeTimesDivideExpression() -> Expr_ptr;
     auto MakePlusMinusExpression() -> Expr_ptr;
+    auto UnionAllExpression() -> Expr_ptr;
 
   public:
     Parser(std::vector<Token> &tokens) : m_tokens(std::move(tokens))
